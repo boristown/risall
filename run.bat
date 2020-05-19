@@ -1,0 +1,2 @@
+python HTMLGenerator.py
+pause

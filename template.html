@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+
+<html lang="zh" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>{{title}}</title>
+</head>
+<body>
+    <p>{{market_type}}</p>
+    <p>更新时间Updated Time: {{localtime}}</p>
+    <table border="2">
+        <tr>
+            <th>序号No</th>
+            <th>市场Market</th>
+            <th>UTC日期Date</th>
+            <th>开盘价Open</th>
+            <th>最高价High</th>
+            <th>最低价Low</th>
+            <th>当前价Current</th>
+            <th>预测Prediction</th>
+            <th>评分Score</th>
+        </tr>
+        {% for item in body %}
+        <tr>
+            <td>{{ item.ItemNo }}</td>
+            <td>{{ item.Market }}</td>
+            <td>{{ item.Date }}</td>
+            <td>{{ item.Open }}</td>
+            <td>{{ item.High }}</td>
+            <td>{{ item.Low }}</td>
+            <td>{{ item.Close }}</td>
+            <td>{{ item.Side }}</td>
+            <td>{{ item.Score }}</td>
+        </tr>
+        {% endfor%}
+    </table>
+    <div id="footer">京ICP备20013339号</div>
+</body>
+</html>
