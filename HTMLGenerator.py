@@ -32,5 +32,5 @@ if __name__ == "__main__":
                 }
             body.append(result)
         generate_html(u"AI纪元AIEra", u"加密货币CryptoCurrency", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), body)
-        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),"result.html已生成。")
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),"index.html已生成。")
         time.sleep(10)

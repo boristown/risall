@@ -16,10 +16,11 @@ def get_index_list():
     index_list = []
     myconnector, mycursor = init_mycursor()
     list_statement = '''
-    SELECT b.symbol_alias, DATE_FORMAT(a.date,"%Y-%m-%d"), a.o, a.h, a.l, a.c, if(a.f>=0.5,"涨↑","跌↓") as side, abs((a.f*2-1)*100) as score 
-    FROM zeroai.pricehistory as a inner join zeroai.symbol_alias as  b on a.symbol = b.symbol
+    SELECT b.symbol_alias, a.date, a.o, a.h, a.l, a.c, if(a.f>=0.5,"涨↑","跌↓") as side, abs((a.f*2-1)*100) as score 
+    FROM zeroai.pricehistory as a inner join 
+    (select symbol,group_concat(symbol_alias) as symbol_alias, market_type from zeroai.symbol_alias group by symbol, market_type) as b on a.symbol = b.symbol
     inner join zeroai.predictlog as c on a.symbol = c.symbol and a.date = c.MAXDATE
-    where b.MARKET_TYPE = "加密货币"
+    where b.MARKET_TYPE = '加密货币'
     and a.date > DATE_ADD(curtime(),INTERVAL -10 DAY)
     and a.f <> 0.5
     order by score desc;
