@@ -31,13 +31,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="donate.html" />
+    <Content Include="Index.css" />
     <Content Include="install.bat">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="js\d3.min.js" />
+    <Content Include="Market.css" />
     <Content Include="run.bat">
       <SubType>Code</SubType>
     </Content>
     <Content Include="template.html" />
+    <Content Include="market.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="js\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

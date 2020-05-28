@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+
+<html lang="zh" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>{{title}}</title>
+    <link rel="icon" href="../Logo.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../Logo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../Index.css" type="text/css">
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?a51dda48987e99d43feee9e0e9953ba0";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+</head>
+<body>
+    <div class="fixed_div">
+        <marquee scrollamount=10>
+            <h3 class="donate">{{donate}}</h3>
+        </marquee>
+    </div>
+    <div class="virtual_body" align="center">
+        <div>
+            <br>
+            <h1>
+                <a href={{market_type_ref}}>{{market_type}}</a>
+            </h1>
+            <h2>{{market_name}}</h2>
+            <h3>更新时间Updated Time: {{localtime}}（每60分钟更新一次Updated every 60 minutes）</h3>
+            <h4><a href="../donate.html">点击赞助AI纪元-预测线网站，您的名字将显示为弹幕。</a></h4>
+            <div id="container">
+            </div>
+            <div align="center">
+                <h4>市场评分由海龟三号AI评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
+                <table border="0">
+                    <tr class="head">
+                        <th>日期Date</th>
+                        <th>开盘价Open</th>
+                        <th>最高价High</th>
+                        <th>最低价Low</th>
+                        <th>当前价Current</th>
+                        <th>今日上涨Today</th>
+                        <th>预测Prediction</th>
+                        <th>评分Score</th>
+                    </tr>
+                    {% for item in body %}
+                    <tr class={{ item.Class }}>
+                        <td>{{ item.Date }}</td>
+                        <td>{{ item.Open }}</td>
+                        <td>{{ item.High }}</td>
+                        <td>{{ item.Low }}</td>
+                        <td>{{ item.Close }}</td>
+                        <td>{{ item.Today }}</td>
+                        <td>{{ item.Prediction }}</td>
+                        <td>{{ item.Score }}</td>
+                    </tr>
+                    {% endfor%}
+                </table>
+                <div id="footer">联系AI纪元-预测线：forcastline@163.com</div>
+                <div id="footer">京ICP备20013339号</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/d3.min.js" charset="utf-8"></script>
+    <script>
+        //var width = 600, height = 300,
+        var width = document.body.clientWidth;
+        var height = 600;
+        var margin = { left: 50, top: 30, right: 50, bottom: 20 },
+            g_width = width - margin.left - margin.right,
+            g_height = height - margin.top - margin.bottom;
+            //g_height = g_width / 2.0;
+
+        //svg
+        d3.select("#container").append("svg")
+            //width,height
+            .attr("width", width)
+            .attr("height", height)
+
+        var g = d3.select("svg")
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        //var data = [1, 8, 5, 6, 8, 9, 3, 5, 2]
+        var data = {{price_list}}
+
+        //Scale
+        var scale_x = d3.scaleLinear()
+            .domain([0, data.length - 1])
+            .range([0, g_width]);
+        var scale_y = d3.scaleLinear()
+            .domain([0, d3.max(data)])
+            .range([g_height, 0]);
+
+        //画线函数
+        var line_generator = d3.line()
+            .x(function (d, i) {
+                return scale_x(i);
+            })
+            .y(function (d) {
+                return scale_y(d);
+            })
+            .curve(d3.curveMonotoneX)
+        // .curve(d3.curveMonotoneX) // apply smoothing to the line
+
+        //画路径
+        g.append("path")
+            .attr("d", line_generator(data)) //d="M1,0L20,40.....  d-path data
+
+        //X轴
+        g.append("g")
+            .call(d3.axisBottom(scale_x))
+            .attr("transform", "translate(0," + g_height + ")")
+
+        //Y轴
+        g.append("g")
+            .call(d3.axisLeft(scale_y))
+
+        //y轴文字
+        g.append("text")
+            .text("价格Price")
+            .attr("transform", "rotate(-90)")
+            .attr("dy", "1em")
+            .attr("text-anchor", "end")
+    </script>
+</body>
+</html>
