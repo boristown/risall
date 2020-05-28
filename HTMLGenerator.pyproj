@@ -26,9 +26,6 @@
     <Compile Include="mydb.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mypsw.py">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="donate.html" />
