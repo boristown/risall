@@ -94,7 +94,8 @@
             .domain([0, data.length - 1])
             .range([0, g_width]);
         var scale_y = d3.scaleLinear()
-            .domain([0, d3.max(data)])
+            //.domain([0, d3.max(data)])
+            .domain([d3.min(data), d3.max(data)])
             .range([g_height, 0]);
 
         //画线函数
