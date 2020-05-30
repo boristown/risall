@@ -86,25 +86,59 @@
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        //var data = [1, 8, 5, 6, 8, 9, 3, 5, 2]
-        var data = {{price_list}}
+        //var data = {"2020-05-28": 30.5, "2020-05-29": 30.4, 5, 6, 8, 9, 3, 5, 2]
+        var data = {{ price_list }}
 
-        //Scale
-        var scale_x = d3.scaleLinear()
-            .domain([0, data.length - 1])
+        var parseDate = d3.timeParse("%Y-%m-%d");
+
+       //for (var d in data) {
+       //    d.key = parseDate(d.key);
+       //}
+       data.forEach(function (d) {
+           d.date = parseDate(d.date);
+           d.close = +d.close;
+           //d = parseDate(d)
+       });
+        //定义xy坐标轴的值域
+        //var scale_x = d3.scaleLinear()
+        var scale_x = d3.scaleTime()
+            //.domain([0, data.length - 1])
+            //.domain([d3.min(data[0]), d3.max(data[0])])
+            //.domain([d3.min(data), d3.max(data)])
+            .domain(d3.extent(data, function (d) { return d.date; }))
             .range([0, g_width]);
         var scale_y = d3.scaleLinear()
             //.domain([0, d3.max(data)])
-            .domain([d3.min(data), d3.max(data)])
+            //.domain([d3.min(data[1]), d3.max(data[1])])
+            //.domain([d3.min(data), d3.max(data)])
+            .domain(d3.extent(data, function (d) { return d.close; }))
             .range([g_height, 0]);
 
-        //画线函数
+        // //画面积函数
+        // var area_generator= d3.area()
+        //     .x(function (d,i) {
+        //         return scale_x(i);
+        //     })
+        //     .y0(g_height)
+        //     .y1(function (d) {
+        //         return scale_y(d);
+        //     })
+        //     .curve(d3.curveMonotoneX)
+        //
+        // //画面积
+        // g.append("path")
+        //     .attr("d",area_generator(data)) //d="M1,0L20,40.....  d-path data
+        //     .style("fill","steelblue")
+
+        //画线模板函数
         var line_generator = d3.line()
             .x(function (d, i) {
-                return scale_x(i);
+                //return scale_x(i);
+                return scale_x(d.date);
             })
             .y(function (d) {
-                return scale_y(d);
+                //return scale_y(d);
+                return scale_y(d.close);
             })
             .curve(d3.curveMonotoneX)
         // .curve(d3.curveMonotoneX) // apply smoothing to the line
@@ -113,7 +147,12 @@
         g.append("path")
             .attr("d", line_generator(data)) //d="M1,0L20,40.....  d-path data
 
-        //X轴
+        //定义X轴 
+        var xAxis = d3.axisBottom(scale_x)
+            //.tickFormat(d3.time.format("%Y-%m-%d"))
+            .tickFormat(d3.timeFormat("%Y-%m-%d"))
+
+        //显示X轴
         g.append("g")
             .call(d3.axisBottom(scale_x))
             .attr("transform", "translate(0," + g_height + ")")
