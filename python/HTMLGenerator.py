@@ -14,8 +14,9 @@ def generate_html(title, html_name, market_type,
                   market_ref7, market_type7,
                   donate,
                   localtime, body):
-    env = Environment(loader=FileSystemLoader('./'))
-    template = env.get_template('../static/template/template.html')
+    #env = Environment(loader=FileSystemLoader('./'))
+    env = Environment(loader=FileSystemLoader('../static/template/'))
+    template = env.get_template('template.html')
     with open(html_name,'w+',encoding='utf-8') as fout:   
         html_content = template.render(
                                         title = title, market_type=market_type , 
@@ -34,8 +35,9 @@ def generate_market_html(title, html_name, market_name,
                   market_type, market_type_ref, 
                   price_list, donate, data_dict,
                   localtime, body):
-    env = Environment(loader=FileSystemLoader('./'))
-    template = env.get_template('../static/template/market.html')
+    #env = Environment(loader=FileSystemLoader('./'))
+    env = Environment(loader=FileSystemLoader('../static/template/'))
+    template = env.get_template('market.html')
     with open(html_name,'w+',encoding='utf-8') as fout:   
         html_content = template.render(
                                         title = title, market_name=market_name , 
