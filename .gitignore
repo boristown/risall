@@ -340,3 +340,12 @@ ASALocalRun/
 healthchecksdb
 
 mypsw.py
+/market
+/static/ssl
+/static/commodities.html
+/static/currencies.html
+/static/index.html
+/static/indices.html
+/static/stocks.html
+/static/stocksHK.html
+/static/stocksUS.html

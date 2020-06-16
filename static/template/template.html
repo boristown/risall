@@ -37,10 +37,17 @@
             </h2>
             <h3>更新时间Updated Time: {{localtime}}（每60分钟更新一次Updated every 60 minutes）</h3>
             <h2><a href="donate.html">点击赞助AI纪元-预测线网站，您的名字将显示为弹幕。</a></h2>
-            <h4>市场评分由海龟三号AI评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
+            <form action="s.html" method="get">
+                <div>
+                    <!--<label for="search">查找市场</label>-->
+                    <input style="text-align:center;width: 65%;height:40px" type="search" name="wd" id="search" placeholder="请输入市场名，例如：上证指数、黄金">
+                    <button style="width: 30%;height:40px">开始搜索</button>
+                </div>
+            </form>
+            <h4>市场评分由<a href="https://mp.weixin.qq.com/s/DWcvnNTaQ5IWIYN_CeQ8rA">海龟三号AI</a>评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
             <table border="0">
                 <tr class="head">
-                    <th>序号No</th>
+                    <th><center>序号No</center></th>
                     <th>市场Market</th>
                     <th>预测Prediction</th>
                     <th>评分Score</th>
@@ -48,12 +55,14 @@
                     <th>开盘价Open</th>
                     <th>最高价High</th>
                     <th>最低价Low</th>
-                    <th>当前价Current</th>
+                    <th><b>当前价Current</b></th>
+                    <th>成交量Volume</th>
                     <th>今日上涨Today</th>
+                    <th>年化收益Annualised</th>
                 </tr>
                 {% for item in body %}
                 <tr class={{ item.Class }}>
-                    <td>{{ item.ItemNo }}</td>
+                    <td><center>{{ item.ItemNo }}</center></td>
                     <td><a class={{ item.Class }} href='{{ item.Symbol }}'>{{ item.Market }}</a></td>
                     <td>{{ item.Side }}</td>
                     <td>{{ item.Score }}</td>
@@ -61,8 +70,10 @@
                     <td>{{ item.Open }}</td>
                     <td>{{ item.High }}</td>
                     <td>{{ item.Low }}</td>
-                    <td>{{ item.Close }}</td>
+                    <td><b>{{ item.Close }}</b></td>
+                    <td>{{ item.Volume }}</td>
                     <td>{{ item.Rise }}</td>
+                    <th>{{ item.Annualised }}</th>
                 </tr>
                 {% endfor%}
             </table>

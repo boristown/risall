@@ -5,13 +5,14 @@
     <ProjectGuid>9d8faa91-d26d-419c-9b75-da55489b0e4f</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>HTMLGenerator.py</StartupFile>
+    <StartupFile>python\api.py</StartupFile>
     <SearchPath>
     </SearchPath>
-    <WorkingDirectory>.</WorkingDirectory>
+    <WorkingDirectory>python\</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>HTMLGenerator</Name>
     <RootNamespace>HTMLGeneratorr</RootNamespace>
+    <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,27 +23,41 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="HTMLGenerator.py" />
-    <Compile Include="mydb.py">
+    <Compile Include="python\api.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="python\HTMLGenerator.py" />
+    <Compile Include="python\mydb.py" />
+    <Compile Include="python\mypsw.py" />
+    <Compile Include="python\__init__.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="donate.html" />
-    <Content Include="Index.css" />
     <Content Include="install.bat">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="js\d3.min.js" />
-    <Content Include="Market.css" />
-    <Content Include="run.bat">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="template.html" />
-    <Content Include="market.html" />
+    <Content Include="python\api.bat" />
+    <Content Include="static\commodities.html" />
+    <Content Include="static\currencies.html" />
+    <Content Include="static\donate.html" />
+    <Content Include="static\Index.css" />
+    <Content Include="static\index.html" />
+    <Content Include="static\indices.html" />
+    <Content Include="static\js\d3.min.js" />
+    <Content Include="static\js\jquery-latest.js" />
+    <Content Include="static\Logo.ico" />
+    <Content Include="python\run.bat" />
+    <Content Include="static\s.html" />
+    <Content Include="static\stocks.html" />
+    <Content Include="static\stocksHK.html" />
+    <Content Include="static\stocksUS.html" />
+    <Content Include="static\template\market.html" />
+    <Content Include="static\template\template.html" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="js\" />
+    <Folder Include="python\" />
+    <Folder Include="static\" />
+    <Folder Include="static\js\" />
+    <Folder Include="static\template\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

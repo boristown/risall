@@ -3,6 +3,7 @@ import mydb
 import datetime
 import time
 import math
+from tqdm import tqdm
 
 def generate_html(title, html_name, market_type, 
                   market_ref2, market_type2,
@@ -14,7 +15,7 @@ def generate_html(title, html_name, market_type,
                   donate,
                   localtime, body):
     env = Environment(loader=FileSystemLoader('./'))
-    template = env.get_template('template.html')
+    template = env.get_template('../static/template/template.html')
     with open(html_name,'w+',encoding='utf-8') as fout:   
         html_content = template.render(
                                         title = title, market_type=market_type , 
@@ -31,41 +32,41 @@ def generate_html(title, html_name, market_type,
         
 def generate_market_html(title, html_name, market_name,
                   market_type, market_type_ref, 
-                  price_list, donate,
+                  price_list, donate, data_dict,
                   localtime, body):
     env = Environment(loader=FileSystemLoader('./'))
-    template = env.get_template('market.html')
+    template = env.get_template('../static/template/market.html')
     with open(html_name,'w+',encoding='utf-8') as fout:   
         html_content = template.render(
                                         title = title, market_name=market_name , 
                                         market_type = market_type, market_type_ref = market_type_ref, 
-                                        price_list = price_list, donate = donate,
+                                        price_list = price_list, donate = donate, data_dict=data_dict,
                                         localtime=localtime , 
                                         body=body)
         fout.write(html_content)
 
 if __name__ == "__main__":
     html_name = {
-        "加密货币":"index.html",
-        "全球股指":"indices.html",
-        "商品期货":"commodities.html",
-        "外汇":"currencies.html",
-        "股票":"stocks.html",
-        "美国股票":"stocksUS.html",
-        "香港股票":"stocksHK.html",
+        "外汇":"../static/currencies.html",
+        "加密货币":"../static/index.html",
+        "全球股指":"../static/indices.html",
+        "商品期货":"../static/commodities.html",
+        "股票":"../static/stocks.html",
+        "美国股票":"../static/stocksUS.html",
+        "香港股票":"../static/stocksHK.html",
         }
     market_type = {
+        "外汇":"外汇Currencies",
         "加密货币":"加密货币Crypto",
         "全球股指":"全球股指Indices",
         "商品期货":"商品期货Commodities",
-        "外汇":"外汇Currencies",
         "股票":"中国股票CN Stocks",
         "美国股票":"美国股票US Stocks",
         "香港股票":"香港股票HK Stocks",
         }
 
     donate = '冯*俊 赞助10元 2020年5月23日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;刘*超 赞助200元 2020年5月23日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;张*勇 赞助50元 2020年5月25日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;熊*添 赞助1000元 2020年5月23日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;秦汉 赞助100元 2020年5月25日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;赵磊 赞助12.34元 2020年5月25日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;于*万 赞助1元 2020年5月25日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;徐坚 赞助8.88元 2020年5月29日'
-
+    currenciesDict = {}
     while True:
         for market_key in market_type:
             body = []
@@ -74,7 +75,54 @@ if __name__ == "__main__":
                 if market_key2 != market_key:
                     keys.append(market_key2)
             indexlist = mydb.get_index_list(market_key)
+            if market_key == '外汇':
+                currenciesDict = {}
+                for indexline in indexlist:
+                    currenciesDict[indexline[10]] = indexline[6]
+            market_list = mydb.get_market_list(market_key)
+
+            annualised = {}
+            processbar = tqdm(market_list, ncols=80)
+            for market_id in processbar:
+                processbar.set_description(market_key)
+                marketprices, annualised[market_id[0]] = mydb.get_market_prices(market_id[0])
+                if len(marketprices) == 0:
+                    continue
+                market_html_name = '../static/market/' + market_id[0] + ".html"
+                price_list = [{"date":marketprice["Date"],"close":marketprice["Close"], "balance":marketprice["Balance"]} for marketprice in marketprices][-1::-1]
+                price_lists = []
+                price_lists.append(price_list[-30:])
+                price_lists.append(price_list[-60:])
+                price_lists.append(price_list[-120:])
+                price_lists.append(price_list[-240:])
+                price_lists.append(price_list)
+                datelist = [marketprice["Date"] for marketprice in marketprices][-1::-1]
+                valuelist = price_list
+                data_dict = dict(zip(datelist, valuelist))
+                #日期插值
+                mindate = datetime.datetime.strptime(datelist[0], "%Y-%m-%d")
+                maxdate = datetime.datetime.strptime(datelist[-1], "%Y-%m-%d")
+                currentdate = mindate
+                lastitem = price_list[0]
+                while currentdate <= maxdate:
+                    currentdatestr = currentdate.strftime("%Y-%m-%d")
+                    if currentdatestr not in data_dict:
+                        data_dict[currentdatestr] = lastitem
+                    else:
+                        lastitem = data_dict[currentdatestr]
+                    currentdate += datetime.timedelta(days=1)
+                generate_market_html(u"AI预测：" +market_id[1] +"--预测线forcastline.com", market_html_name, market_id[1],
+                      market_type[market_key], '../' + html_name[market_key],
+                      price_lists, donate, data_dict,
+                      time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), marketprices)
+            
             for indexline in indexlist:
+                if True or indexline[1][0:3] == 'USD' or ',USD' in indexline[1]:
+                    volume = indexline[7]
+                elif indexline[11] is not None:
+                    volume = indexline[7] * indexline[6] * currenciesDict[indexline[11]]
+                else:
+                    volume = indexline[7] * indexline[6]
                 result = {
                     'ItemNo':indexline[0], 
                     'Market':'<span><p>'+indexline[1].replace(',','</p><p>')+'</p></span>',
@@ -83,14 +131,23 @@ if __name__ == "__main__":
                     "High":indexline[4],
                     "Low":indexline[5],
                     "Close":indexline[6],
+                    "Volume":volume,
                     "Rise":str(round((indexline[6] / indexline[3] - 1) * 100, 2)) + "%",
-                    "Side":indexline[7],
-                    "Score":round(indexline[8],2),
-                    "Class":'rise' if '涨' in indexline[7] else 'fall',
-                    "Symbol":"market/"+indexline[9] + ".html",
+                    "Side":indexline[8],
+                    "Score":round(indexline[9],2),
+                    "Class":'rise' if '涨' in indexline[8] else 'fall',
+                    "Symbol":"market/"+indexline[10] + ".html",
+                    "Annualised": annualised[indexline[10]]
                     }
                 body.append(result)
-            generate_html(u"预测线forcastline.com", 
+            body.sort(reverse = True, key = lambda line:(line["Annualised"], line["Score"]))
+            for bodyitem in body:
+                bodyitem["Annualised"] = str(round(bodyitem["Annualised"] * 100, 2)) + "%"
+            itemNo = 0
+            for indexline in body:
+                itemNo += 1
+                indexline["ItemNo"] = itemNo
+            generate_html(u"AI预测：" + market_type[market_key] +"--预测线forcastline.com", 
                           html_name[market_key], market_type[market_key], 
                           html_name[keys[0]], market_type[keys[0]], 
                           html_name[keys[1]], market_type[keys[1]], 
@@ -102,16 +159,5 @@ if __name__ == "__main__":
                           time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), 
                           body)
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),html_name[market_key],"已生成。")
-            market_list = mydb.get_market_list(market_key)
-            for market_id in market_list:
-                marketprices = mydb.get_market_prices(market_id[0])
-                market_html_name = 'market/' + market_id[0] + ".html"
-                price_list = [{"date":marketprice["Date"],"close":marketprice["Close"]} for marketprice in marketprices][-1::-1]
-                #date_list = [marketprice["Date"] for marketprice in marketprices][-1::-1]
-                #price_dict = dict(list(zip(date_list, price_list)))
-                #date_price = [date_list, price_list]
-                generate_market_html(u"预测线forcastline.com", market_html_name, market_id[1],
-                      market_type[market_key], '../' + html_name[market_key],
-                      price_list, donate,
-                      time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), marketprices)
+            
         #time.sleep(10)
