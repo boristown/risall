@@ -4,6 +4,7 @@ import datetime
 import time
 import math
 from tqdm import tqdm
+import donate
 
 def generate_html(title, html_name, market_type, 
                   market_ref2, market_type2,
@@ -17,7 +18,7 @@ def generate_html(title, html_name, market_type,
     #env = Environment(loader=FileSystemLoader('./'))
     env = Environment(loader=FileSystemLoader('../static/template/'))
     template = env.get_template('template.html')
-    with open(html_name,'w+',encoding='utf-8') as fout:   
+    with open('../static/' + html_name,'w+',encoding='utf-8') as fout:   
         html_content = template.render(
                                         title = title, market_type=market_type , 
                                         market_ref2 = market_ref2, market_type2 = market_type2,
@@ -32,16 +33,16 @@ def generate_html(title, html_name, market_type,
         fout.write(html_content)
         
 def generate_market_html(title, html_name, market_name,
-                  market_type, market_type_ref, 
+                  market_type, market_type_ref,  market_prediction,
                   price_list, donate, data_dict,
                   localtime, body):
     #env = Environment(loader=FileSystemLoader('./'))
     env = Environment(loader=FileSystemLoader('../static/template/'))
     template = env.get_template('market.html')
-    with open(html_name,'w+',encoding='utf-8') as fout:   
+    with open('../static/' + html_name,'w+',encoding='utf-8') as fout:   
         html_content = template.render(
                                         title = title, market_name=market_name , 
-                                        market_type = market_type, market_type_ref = market_type_ref, 
+                                        market_type = market_type, market_type_ref = market_type_ref, market_prediction =market_prediction,
                                         price_list = price_list, donate = donate, data_dict=data_dict,
                                         localtime=localtime , 
                                         body=body)
@@ -49,13 +50,13 @@ def generate_market_html(title, html_name, market_name,
 
 if __name__ == "__main__":
     html_name = {
-        "外汇":"../static/currencies.html",
-        "加密货币":"../static/index.html",
-        "全球股指":"../static/indices.html",
-        "商品期货":"../static/commodities.html",
-        "股票":"../static/stocks.html",
-        "美国股票":"../static/stocksUS.html",
-        "香港股票":"../static/stocksHK.html",
+        "外汇":"currencies.html",
+        "加密货币":"index.html",
+        "全球股指":"indices.html",
+        "商品期货":"commodities.html",
+        "股票":"stocks.html",
+        "美国股票":"stocksUS.html",
+        "香港股票":"stocksHK.html",
         }
     market_type = {
         "外汇":"外汇Currencies",
@@ -67,7 +68,6 @@ if __name__ == "__main__":
         "香港股票":"香港股票HK Stocks",
         }
 
-    donate = '冯*俊 赞助10元 2020年5月23日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;刘*超 赞助200元 2020年5月23日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;张*勇 赞助50元 2020年5月25日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;熊*添 赞助1000元 2020年5月23日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;秦汉 赞助100元 2020年5月25日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;赵磊 赞助12.34元 2020年5月25日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;于*万 赞助1元 2020年5月25日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;徐坚 赞助8.88元 2020年5月29日'
     currenciesDict = {}
     while True:
         for market_key in market_type:
@@ -113,9 +113,10 @@ if __name__ == "__main__":
                     else:
                         lastitem = data_dict[currentdatestr]
                     currentdate += datetime.timedelta(days=1)
+                market_prediction = "今日操作：" + marketprices[0]["Prediction"] +  " 年化：" + str(round(annualised[market_id[0]] * 100, 2)) + "%"
                 generate_market_html(u"AI预测：" +market_id[1] +"--预测线forcastline.com", market_html_name, market_id[1],
-                      market_type[market_key], '../' + html_name[market_key],
-                      price_lists, donate, data_dict,
+                      market_type[market_key], '../' + html_name[market_key], market_prediction,
+                      price_lists, donate.donate, data_dict,
                       time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), marketprices)
             
             for indexline in indexlist:
@@ -151,13 +152,13 @@ if __name__ == "__main__":
                 indexline["ItemNo"] = itemNo
             generate_html(u"AI预测：" + market_type[market_key] +"--预测线forcastline.com", 
                           html_name[market_key], market_type[market_key], 
-                          html_name[keys[0]], market_type[keys[0]], 
-                          html_name[keys[1]], market_type[keys[1]], 
-                          html_name[keys[2]], market_type[keys[2]], 
-                          html_name[keys[3]], market_type[keys[3]], 
-                          html_name[keys[4]], market_type[keys[4]], 
-                          html_name[keys[5]], market_type[keys[5]], 
-                          donate,
+                          html_name[keys[0]], market_type[keys[0]],
+                          html_name[keys[1]], market_type[keys[1]],
+                          html_name[keys[2]], market_type[keys[2]],
+                          html_name[keys[3]], market_type[keys[3]],
+                          html_name[keys[4]], market_type[keys[4]],
+                          html_name[keys[5]], market_type[keys[5]],
+                          donate.donate,
                           time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), 
                           body)
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),html_name[market_key],"已生成。")

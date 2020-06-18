@@ -1,7 +1,8 @@
 ﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # by vellhe 2017/7/9
-from flask import Flask, send_from_directory, render_template
+from flask import Flask, send_from_directory, render_template, request
+from jinja2 import Environment, FileSystemLoader 
 from flask_restful import reqparse, abort, Api, Resource
 import mysql.connector
 import mypsw
@@ -9,8 +10,12 @@ import mydb
 from OpenSSL import SSL
 from OpenSSL.crypto import *
 import contextlib
+import json
+import donate
+import datetime
+import time
 
-app = Flask(__name__,static_url_path='')
+app = Flask(__name__,static_url_path='',root_path='C:\Forcastlinecom')
 api = Api(app)
 
 TODOS = {
@@ -50,7 +55,6 @@ class Todo(Resource):
         task = {'task': args['task']}
         TODOS[todo_id] = task
         return task, 201
-
 
 # # 操作（post / get）资源列表TodoList
 # shows a list of all todos, and lets you POST to add new tasks
@@ -114,40 +118,45 @@ def get_markets_from_tag(tagname, mycursor):
       markets = get_markets_from_endtags(endtags, mycursor)
       return markets
 
+def getMarket(wd):
+    if not wd:
+        return {"type":"E", "message":"请在form-data中传入wd参数"}
+    input_text = wd.strip().upper()
+    output_list = []
+    myconnection, mycursor = init_mycursor()
+    #fetch var name
+    select_alias_statment = "SELECT symbol_alias.symbol, group_concat(symbol_alias.symbol_alias) FROM symbol_alias " \
+        " inner join predictlog on symbol_alias.symbol = predictlog.symbol and predictlog.LOADINGDATE > '1950-1-1' " \
+        " WHERE symbol_alias.symbol_alias = '" + input_text + "' group by symbol"
+        
+    print(select_alias_statment)
+    mycursor.execute(select_alias_statment)
+    alias_results = mycursor.fetchall()
+    for alias_result in alias_results:
+        output_list.append({"id":alias_result[0], "name":alias_result[1]})
+    if len(output_list) == 0:
+        #fetch var tag
+        output_list = get_markets_from_tag(input_text, mycursor)
+        if len(output_list) == 0:
+            input_text = input_text.replace("/","%").replace("-","%").replace("*","%").replace(" ","%").replace("?","%").replace("=","%")
+            select_alias_statment = "SELECT symbol_alias.symbol, group_concat(symbol_alias) FROM symbol_alias WHERE symbol_alias LIKE '%" + input_text + "%' group by symbol"
+            print(select_alias_statment)
+            mycursor.execute(select_alias_statment)
+            alias_results = mycursor.fetchall()
+            for alias_result in alias_results:
+                output_list.append({"id":alias_result[0], "name":alias_result[1]})
+    markets = [market["id"] for market in output_list]
+    if len(markets) == 0:
+        return [],[]
+    return mydb.get_search_list(markets), markets
+
 # # 操作（post / get）资源列表TodoList
 # shows a list of all todos, and lets you POST to add new tasks
 class Search(Resource):
     def get(self):
         args = parser.parse_args()
         wd = args['wd']
-        if not wd:
-            return {"type":"E", "message":"请在form-data中传入wd参数"}
-        input_text = wd.strip().upper()
-        output_list = []
-        myconnection, mycursor = init_mycursor()
-        #fetch var name
-        select_alias_statment = "SELECT symbol_alias.symbol, group_concat(symbol_alias.symbol_alias) FROM symbol_alias " \
-          " inner join predictlog on symbol_alias.symbol = predictlog.symbol and predictlog.LOADINGDATE > '1950-1-1' " \
-          " WHERE symbol_alias.symbol_alias = '" + input_text + "' group by symbol"
-        
-        print(select_alias_statment)
-        mycursor.execute(select_alias_statment)
-        alias_results = mycursor.fetchall()
-        for alias_result in alias_results:
-            output_list.append({"id":alias_result[0], "name":alias_result[1]})
-        if len(output_list) == 0:
-            #fetch var tag
-            output_list = get_markets_from_tag(input_text, mycursor)
-            if len(output_list) == 0:
-                input_text = input_text.replace("/","%").replace("-","%").replace("*","%").replace(" ","%").replace("?","%").replace("=","%")
-                select_alias_statment = "SELECT symbol_alias.symbol, group_concat(symbol_alias) FROM symbol_alias WHERE symbol_alias LIKE '%" + input_text + "%' group by symbol"
-                print(select_alias_statment)
-                mycursor.execute(select_alias_statment)
-                alias_results = mycursor.fetchall()
-                for alias_result in alias_results:
-                    output_list.append({"id":alias_result[0], "name":alias_result[1]})
-        markets = [market["id"] for market in output_list]
-        return mydb.get_search_list(markets)
+        return getMarket(wd)
 
     def post(self):
         args = parser.parse_args()
@@ -177,18 +186,78 @@ api.add_resource(TodoList, '/todos')
 api.add_resource(Todo, '/todos/<todo_id>')
 api.add_resource(Search, '/api/search')
 
-
 @app.route('/')
 def home():
-    return app.send_static_file("../static/index.html")
+    return app.send_static_file("index.html")
+
+def generate_search_html(title, 
+                  wd,
+                  donate,
+                  localtime, body):
+    #env = Environment(loader=FileSystemLoader('./'))
+    env = Environment(loader=FileSystemLoader('../static/template/'))
+    template = env.get_template('searchTemplate.html')
+    #with open('../static/' + html_name,'w+',encoding='utf-8') as fout:   
+    html_content = template.render(
+                                    title = title, 
+                                    market_wd = wd,
+                                    donate = donate,
+                                    localtime=localtime , 
+                                    body=body)
+    return html_content
+    #fout.write(html_content)
+
+@app.route('/s', methods=['post','get'])
+def searchpage():
+    wd = request.args.get('wd')
+    marketlist, markets = getMarket(wd)
+    if len(marketlist) == 1:
+        return app.send_static_file("market/" + markets[0] +".html")
+    #marketlist = json.loads(marketJson)
+    body = []
+    for marketitem in marketlist:
+        indexline = marketitem
+        if True or indexline[1][0:3] == 'USD' or ',USD' in indexline[1]:
+            volume = indexline[7]
+        elif indexline[11] is not None:
+            volume = indexline[7] * indexline[6] * currenciesDict[indexline[11]]
+        else:
+            volume = indexline[7] * indexline[6]
+        result = {
+            'ItemNo':indexline[0], 
+            'Market':'<span><p>'+indexline[1].replace(',','</p><p>')+'</p></span>',
+            'Date': indexline[2], 
+            'Open':indexline[3],
+            "High":indexline[4],
+            "Low":indexline[5],
+            "Close":indexline[6],
+            "Volume":volume,
+            "Rise":str(round((indexline[6] / indexline[3] - 1) * 100, 2)) + "%",
+            "Side":indexline[8],
+            "Score":round(indexline[9],2),
+            "Class":'rise' if '涨' in indexline[8] else 'fall',
+            "Symbol":"market/"+indexline[10] + ".html"
+            }
+        body.append(result)
+    body.sort(reverse = True, key = lambda line:(line["Score"]))
+    itemNo = 0
+    for indexline in body:
+        itemNo += 1
+        indexline["ItemNo"] = itemNo
+    renderedhtml = generate_search_html(u"AI预测：" + wd +"--预测线forcastline.com", 
+                    wd,
+                    donate.donate,
+                    time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), 
+                    body)
+    return renderedhtml
 
 #@app.route('/<file>')
 #def openfiles():
 #    return app.send_static_file("<file>")
 
-@app.route('/market/<id>')
-def market(id):
-    return app.send_static_file("../static/market/"+id+".html")
+#@app.route('/market/<id>')
+#def market(id):
+#    return app.send_static_file("market/"+id+".html")
 
 if __name__ == '__main__':
     #app.run(host="0.0.0.0", ssl_context='adhoc')

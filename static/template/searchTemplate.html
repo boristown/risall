@@ -27,19 +27,11 @@
     <div class="virtual_body" align="center">
         <div>
             <br>
-            <h1>{{market_type}}</h1>
-            <h2>
-                <a href={{market_ref2}}>{{market_type2}}</a>
-                <a href={{market_ref3}}>{{market_type3}}</a>
-                <a href={{market_ref4}}>{{market_type4}}</a>
-                <a href={{market_ref5}}>{{market_type5}}</a>
-                <a href={{market_ref6}}>{{market_type6}}</a>
-                <a href={{market_ref7}}>{{market_type7}}</a>
-            </h2>
+            <h1>{{market_wd}}</h1>
             <h3>更新时间Updated Time: {{localtime}}（每60分钟更新一次Updated every 60 minutes）</h3>
             <h2><a href="donate.html">点击赞助AI纪元-预测线网站，您的名字将显示为弹幕。</a></h2>
             <!--<iframe src="" frameborder="0" name="iframeContent" style="display: none;"></iframe>-->
-            <!--<form action="/s" method="get" target="iframeContent">-->
+            <!--<form action="/api/search" method="get" target="iframeContent">-->
 
             <div class="search bar7">
                 <form action="/s" method="get">
@@ -62,7 +54,6 @@
                     <th><b>当前价Current</b></th>
                     <th>成交量Volume</th>
                     <th>今日上涨Today</th>
-                    <th>年化收益Annualised</th>
                 </tr>
                 {% for item in body %}
                 <tr class={{ item.Class }}>
@@ -77,12 +68,12 @@
                     <td><b>{{ item.Close }}</b></td>
                     <td>{{ item.Volume }}</td>
                     <td>{{ item.Rise }}</td>
-                    <th>{{ item.Annualised }}</th>
                 </tr>
                 {% endfor%}
             </table>
             <div id="footer">联系AI纪元-预测线：forcastline@163.com</div>
             <div id="footer">京ICP备20013339号</div>
+            -->
         </div>
     </div>
     <script type="text/javascript" src="js/jquery-latest.js"></script>

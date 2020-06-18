@@ -1,11 +1,12 @@
 ﻿<!DOCTYPE html>
 
-<html lang="zh" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="zh" xmlns="https://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
     <title>{{title}}</title>
     <link rel="icon" href="../Logo.ico" type="image/x-icon">
     <link rel="shortcut icon" href="../Logo.ico" type="image/x-icon">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../Index.css" type="text/css">
     <script>
         var _hmt = _hmt || [];
@@ -25,7 +26,7 @@
     </div>
     <div class="virtual_body" align="center">
         <div>
-            <div id="simulationstate" style="position:absolute;padding:5px;">
+            <div id="simulationstate" style="position:absolute;padding:5px; z-index:-1">
                 <h2 id="simulationsymbol">{{market_type}}</h2>
                 <h3 id="simulationtitle">AI模拟交易Simulated Trading</h3>
                 <h3 id="simulationday">第1天Day 1</h3>
@@ -37,7 +38,16 @@
                 <a href={{market_type_ref}}>{{market_type}}</a>
             </h2>
             <h1 class="hidewhensimulation">{{market_name}}</h1>
+            <h2 class="hidewhensimulation">{{market_prediction}}</h2>
             <h3 class="hidewhensimulation">更新时间Updated Time: {{localtime}}（每60分钟更新一次Updated every 60 minutes）</h3>
+
+            <div class="search bar7">
+                <form action="/s" method="get">
+                    <!--<label for="search">查找市场</label>-->
+                    <input type="search" name="wd" id="search" placeholder="请输入市场名，例如：上证指数、黄金">
+                    <button type="submit"></button>
+                </form>
+            </div>
             <h4 class="hidewhensimulation"><a href="../donate.html">点击赞助AI纪元-预测线网站，您的名字将显示为弹幕。</a></h4>
 
             <div id="container">
@@ -276,7 +286,7 @@
             g.append("g")
                 .call(d3.axisBottom(scale_x))
                 .attr("transform", "translate(0," + g_height + ")")
-                .attr("fill","gray")
+                .attr("fill","#48D1CC")
 
             //Y轴
             g.append("g")
@@ -293,7 +303,7 @@
             g.append("text")
                 .text("价格Price")
                 .attr("transform", "rotate(-90)")
-                .attr("fill","steelblue")
+                .attr("fill","Turquoise")
                 .attr("dy", "1em")
                 .attr("text-anchor", "end")
 
@@ -302,7 +312,7 @@
                 .text("余额Balance")
                 .attr("transform", "translate(" + (g_width - 20) + ",0) rotate(-90)")
                 .attr("dy", "1em")
-                .attr("fill","OldLace")
+                .attr("fill","LightSkyBlue")
                 .attr("text-anchor", "end")
 
             tooltip = d3.select('#tooltip');
@@ -403,16 +413,16 @@
                     simulationbalance.style('opacity', 0)
                         .style('animation', 'fadeout10 0.5s');
 
-                d3.select("h1.hidewhensimulation")
+                d3.selectAll("h1.hidewhensimulation")
                     .style('opacity', 1)
                     .style('animation', 'fadeoin10 0.5s')
-                d3.select("h2.hidewhensimulation")
+                d3.selectAll("h2.hidewhensimulation")
                     .style('opacity', 1)
                     .style('animation', 'fadeoin10 0.5s')
-                d3.select("h3.hidewhensimulation")
+                d3.selectAll("h3.hidewhensimulation")
                     .style('opacity', 1)
                     .style('animation', 'fadeoin10 0.5s')
-                d3.select("h4.hidewhensimulation")
+                d3.selectAll("h4.hidewhensimulation")
                     .style('opacity', 1)
                     .style('animation', 'fadeoin10 0.5s')
 
@@ -471,16 +481,16 @@
                 simulationbalance.text("余额Balance:$" + Math.round(seldata.balance * 100) / 100).style('opacity', 1)
                     .style('animation', 'fadeoin10 0.5s')
 
-                d3.select("h1.hidewhensimulation")
+                d3.selectAll("h1.hidewhensimulation")
                     .style('animation', 'fadeout10 0.5s')
                     .style('opacity', 0)
-                d3.select("h2.hidewhensimulation")
+                d3.selectAll("h2.hidewhensimulation")
                     .style('animation', 'fadeout10 0.5s')
                     .style('opacity', 0)
-                d3.select("h3.hidewhensimulation")
+                d3.selectAll("h3.hidewhensimulation")
                     .style('animation', 'fadeout10 0.5s')
                     .style('opacity', 0)
-                d3.select("h4.hidewhensimulation")
+                d3.selectAll("h4.hidewhensimulation")
                     .style('animation', 'fadeout10 0.5s')
                     .style('opacity', 0)
 

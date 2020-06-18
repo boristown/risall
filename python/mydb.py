@@ -52,7 +52,7 @@ def get_search_list(markets):
     index_list = []
     myconnector, mycursor = init_mycursor()
     list_statement = '''
-    SELECT b.symbol_alias, DATE_FORMAT(a.date, "%%Y-%%m-%%d") as date, a.o, a.h, a.l, a.c, a.v as volume, if(a.f>=0.5,"即将上涨↑","即将下跌↓") as side, abs((a.f*2-1)*100) as score , b.symbol, c.basesymbol
+    SELECT b.symbol_alias, DATE_FORMAT(a.date, "%%Y-%%m-%%d") as date, a.o, a.h, a.l, a.c, a.v as volume, if(a.f>=0.5,"即将上涨↑","即将下跌↓") as side, abs((a.f*2-1)*100) as score , b.symbol
     FROM zeroai.pricehistory as a inner join 
     (select symbol,group_concat(symbol_alias) as symbol_alias, market_type from zeroai.symbol_alias group by symbol, market_type) as b on a.symbol = b.symbol
     inner join zeroai.predictlog as c on a.symbol = c.symbol and a.date = c.MAXDATE
@@ -78,7 +78,7 @@ def get_search_list(markets):
             list_result[7],
             list_result[8],
             list_result[9],
-            list_result[10],
+            #list_result[10],
             ])
     return index_list
 

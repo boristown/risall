@@ -26,6 +26,9 @@
     <Compile Include="python\api.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="python\donate.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="python\HTMLGenerator.py" />
     <Compile Include="python\mydb.py" />
     <Compile Include="python\mypsw.py" />
@@ -51,6 +54,7 @@
     <Content Include="static\stocksHK.html" />
     <Content Include="static\stocksUS.html" />
     <Content Include="static\template\market.html" />
+    <Content Include="static\template\searchTemplate.html" />
     <Content Include="static\template\template.html" />
   </ItemGroup>
   <ItemGroup>
