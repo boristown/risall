@@ -14,6 +14,7 @@ import json
 import donate
 import datetime
 import time
+import math
 
 app = Flask(__name__,static_url_path='',root_path='C:\Forcastlinecom')
 api = Api(app)
@@ -156,7 +157,8 @@ class Search(Resource):
     def get(self):
         args = parser.parse_args()
         wd = args['wd']
-        return getMarket(wd)
+        marketsList, markets = getMarket(wd)
+        return marketsList
 
     def post(self):
         args = parser.parse_args()
@@ -190,6 +192,10 @@ api.add_resource(Search, '/api/search')
 def home():
     return app.send_static_file("index.html")
 
+@app.route('/vue')
+def vuehome():
+    return app.send_static_file("vue/index.html")
+
 def generate_search_html(title, 
                   wd,
                   donate,
@@ -206,6 +212,104 @@ def generate_search_html(title,
                                     body=body)
     return html_content
     #fout.write(html_content)
+
+list_name={
+    "currencies":"外汇",
+    "crypto":"加密货币",
+    "indices":"全球股指",
+    "commodities":"商品期货",
+    "stocks":"股票",
+    "stocksUS":"美国股票",
+    "stocksHK":"香港股票",
+    }
+
+html_name = {
+    "外汇":"currencies.html",
+    "加密货币":"index.html",
+    "全球股指":"indices.html",
+    "商品期货":"commodities.html",
+    "股票":"stocks.html",
+    "美国股票":"stocksUS.html",
+    "香港股票":"stocksHK.html",
+    }
+
+market_type = {
+    "外汇":"外汇Currencies",
+    "加密货币":"加密货币Crypto",
+    "全球股指":"全球股指Indices",
+    "商品期货":"商品期货Commodities",
+    "股票":"中国股票CN Stocks",
+    "美国股票":"美国股票US Stocks",
+    "香港股票":"香港股票HK Stocks",
+    }
+
+@app.route('/api/l', methods=['post','get'])
+def getlist():
+    listname = request.args.get("name")
+    if listname not in list_name:
+        return {}
+    maxrows = int(request.args.get("maxrows"))
+
+    body = []
+    keys = []
+    market_key = list_name[listname]
+    for market_key2 in market_type:
+        if market_key2 != market_key:
+            keys.append(market_key2)
+    if maxrows:
+        indexlist = mydb.get_index_list_limit(market_key, maxrows)
+    else:
+        indexlist = mydb.get_index_list_limit(market_key, 0)
+    for indexline in indexlist:
+        volume = indexline[7]
+        #balance = indexline[12]
+        #daycount = indexline[13]
+        #annualised = math.pow(balance, 365.0 / daycount) - 1 if daycount > 0 else 0.0
+        annualised = indexline[12]
+        result = {
+            'ItemNo':indexline[0], 
+            'Market':'<span><p>'+indexline[1].replace(',','</p><p>')+'</p></span>',
+            'Date': indexline[2], 
+            'Open':indexline[3],
+            "High":indexline[4],
+            "Low":indexline[5],
+            "Close":indexline[6],
+            "Volume":volume,
+            "Rise":str(round((indexline[6] / indexline[3] - 1) * 100, 2)) + "%",
+            "Side":indexline[8],
+            "Score":round(indexline[9],2),
+            "Class":'rise' if '涨' in indexline[8] else 'fall',
+            "Symbol":"market.html?symbol="+indexline[10],
+            "Annualised": annualised,
+            "Color": indexline[13]
+            }
+        body.append(result)
+    #body.sort(reverse = True, key = lambda line:(line["Annualised"], line["Score"]))
+    for bodyitem in body:
+        bodyitem["Annualised"] = str(round(bodyitem["Annualised"] * 100, 2)) + "%"
+    itemNo = 0
+    for indexline in body:
+        itemNo += 1
+        indexline["ItemNo"] = itemNo
+    return {
+        "title": u"AI预测：" + market_type[market_key] +"--预测线forcastline.com",
+        "market_type": market_type[market_key],
+        "market_ref2": html_name[keys[0]],
+        "market_type2": market_type[keys[0]],
+        "market_ref3": html_name[keys[1]],
+        "market_type3": market_type[keys[1]],
+        "market_ref4": html_name[keys[2]],
+        "market_type4": market_type[keys[2]],
+        "market_ref5": html_name[keys[3]],
+        "market_type5": market_type[keys[3]],
+        "market_ref6": html_name[keys[4]],
+        "market_type6": market_type[keys[4]],
+        "market_ref7": html_name[keys[5]],
+        "market_type7": market_type[keys[5]],
+        "donate": donate.donate,
+        "localtime": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+        "markets": body,
+        }
 
 @app.route('/s', methods=['post','get'])
 def searchpage():

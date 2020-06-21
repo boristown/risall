@@ -18,7 +18,7 @@ def get_index_list(market_key):
     index_list = []
     myconnector, mycursor = init_mycursor()
     list_statement = '''
-    SELECT b.symbol_alias, DATE_FORMAT(a.date, "%%Y-%%m-%%d") as date, a.o, a.h, a.l, a.c, a.v as volume, if(a.f>=0.5,"即将上涨↑","即将下跌↓") as side, abs((a.f*2-1)*100) as score , b.symbol, c.basesymbol
+    SELECT b.symbol_alias, DATE_FORMAT(a.date, "%%Y-%%m-%%d") as date, a.o, a.h, a.l, a.c, a.v as volume, if(a.f>=0.5,"即将上涨↑","即将下跌↓") as side, abs((a.f*2-1)*100) as score , b.symbol, c.basesymbol, a.balance, a.days
     FROM zeroai.pricehistory as a inner join 
     (select symbol,group_concat(symbol_alias) as symbol_alias, market_type from zeroai.symbol_alias group by symbol, market_type) as b on a.symbol = b.symbol
     inner join zeroai.predictlog as c on a.symbol = c.symbol and a.date = c.MAXDATE
@@ -45,6 +45,82 @@ def get_index_list(market_key):
             list_result[8],
             list_result[9],
             list_result[10],
+            list_result[11],
+            list_result[12],
+            ])
+    return index_list
+
+#HSV -> RGB color
+def hsv2rgb(h, s, v):
+    h = float(h)
+    s = float(s)
+    v = float(v)
+    h60 = h / 60.0
+    h60f = math.floor(h60)
+    hi = int(h60f) % 6
+    f = h60 - h60f
+    p = v * (1 - s)
+    q = v * (1 - f * s)
+    t = v * (1 - (1 - f) * s)
+    r, g, b = 0, 0, 0
+    if hi == 0: r, g, b = v, t, p
+    elif hi == 1: r, g, b = q, v, p
+    elif hi == 2: r, g, b = p, v, t
+    elif hi == 3: r, g, b = p, q, v
+    elif hi == 4: r, g, b = t, p, v
+    elif hi == 5: r, g, b = v, p, q
+    r, g, b = int(r * 255), int(g * 255), int(b * 255)
+    return rgb2hex(r, g, b)
+
+#RGB -> HEX color
+def rgb2hex(r,g,b):
+    hexR = str(hex(r))[-2:].replace("x","0")
+    hexG = str(hex(g))[-2:].replace("x","0")
+    hexB = str(hex(b))[-2:].replace("x","0")
+    return '#' + hexR + hexG + hexB
+
+def get_index_list_limit(market_key, maxrows):
+    index_list = []
+    myconnector, mycursor = init_mycursor()
+    list_statement = '''
+    SELECT b.symbol_alias, DATE_FORMAT(a.date, "%%Y-%%m-%%d") as date, a.o, a.h, a.l, a.c, a.v as volume, if(a.f>=0.5,"即将上涨↑","即将下跌↓") as side, 
+    abs((a.f*2-1)*100) as score , b.symbol, c.basesymbol, if(a.days > 0,power(a.balance, 365.0 / a.days) - 1,0.0) as Annualised
+    FROM zeroai.pricehistory as a inner join 
+    (select symbol,group_concat(symbol_alias) as symbol_alias, market_type from zeroai.symbol_alias group by symbol, market_type) as b on a.symbol = b.symbol
+    inner join zeroai.predictlog as c on a.symbol = c.symbol and a.date = c.MAXDATE
+    where b.MARKET_TYPE = '%s'
+    and a.date > DATE_ADD(curtime(),INTERVAL -10 DAY)
+    and a.f <> 0.5 and a.o > 0
+    order by Annualised desc 
+    ''' % (market_key)
+    if maxrows > 0:
+        list_statement += " limit " + str(maxrows)
+    mycursor.execute(list_statement)
+    list_results = mycursor.fetchall()
+    lineno = 0
+    hmin = 0.0
+    hmax = 0.6667
+    hrange = hmax-hmin
+    for list_result in list_results:
+        lineno += 1
+        hscore = list_result[8] / 100
+        hposition = hrange * hscore
+        colorhex = hsv2rgb(hmin + hposition,0.9, hscore)
+        index_list.append([
+            lineno, #line no
+            list_result[0], #symboll_alias
+            list_result[1], #date
+            list_result[2], #o
+            list_result[3], #h
+            list_result[4], #l
+            list_result[5], #c
+            list_result[6], #volume
+            list_result[7], #side
+            list_result[8], #score
+            list_result[9], #symbol
+            list_result[10], #basesymbol(弃用)
+            list_result[11], #Annualised
+            colorhex, #color
             ])
     return index_list
 
@@ -197,12 +273,26 @@ def get_market_prices(market_id):
                 }
             market_list.append(neworder)
             orderlist.append(neworder)
+
     if len(market_list) == 0:
         return market_list, 0.0
     market_list.sort(reverse = True, key = lambda item:item["Date"])
-    for market_item in market_list:
-        market_item["ATR"] = str(round(market_item["ATR"] * 100.0, 2)) + '%'
     lastdate = datetime.datetime.strptime(market_list[0]["Date"], '%Y-%m-%d')
     firstdate = datetime.datetime.strptime(market_list[-1]["Date"], '%Y-%m-%d')
+    
+    update_val = []
+    for market_item in market_list:
+        market_item["ATR"] = str(round(market_item["ATR"] * 100.0, 2)) + '%'
+        currentdays = datetime.datetime.strptime(market_item["Date"], '%Y-%m-%d')
+        #当前天数
+        days = (currentdays - firstdate ).days
+        update_val.append((market_item["Balance"], days, market_id, market_item["Date"]))
+    #更新余额
+    update_sql = "UPDATE pricehistory SET balance = %s, days = %s where SYMBOL = %s and DATE = %s "
+    mycursor.executemany(update_sql, update_val)
+    
+    myconnector.commit()    # 数据表内容有更新，必须使用到该语句
+
     daycount = (lastdate - firstdate ).days
+    
     return market_list , math.pow(balance, 365.0 / daycount) - 1 if daycount > 0 else 0.0

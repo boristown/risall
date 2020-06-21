@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+
+<html lang="zh" xmlns="https://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>预测线-Vue</title>
+    <script src="../js/vue.js"></script>
+    <link rel="icon" href="Logo.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="Logo.ico" type="image/x-icon">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../Index.css" type="text/css">
+</head>
+<body>
+    <div id="vue_app">
+        <div class="fixed_div" id="appDonate">
+            <marquee scrollamount=10>
+                <h3 class="donate" style='white-space:pre;'>{{donate}}</h3>
+            </marquee>
+        </div>
+        <div class="virtual_body" align="center">
+            <div id="appTable">
+                <br>
+                <h1>{{market_type}}</h1>
+                <h2>
+                    <a :href="market_ref2">{{market_type2}}</a>
+                    <a :href="market_ref3">{{market_type3}}</a>
+                    <a :href="market_ref4">{{market_type4}}</a>
+                    <a :href="market_ref5">{{market_type5}}</a>
+                    <a :href="market_ref6">{{market_type6}}</a>
+                    <a :href="market_ref7">{{market_type7}}</a>
+                </h2>
+                <h3>更新时间Updated Time: {{localtime}}（每60分钟更新一次Updated every 60 minutes）</h3>
+                <h2><a href="donate.html">点击赞助AI纪元-预测线网站，您的名字将显示为弹幕。</a></h2>
+                <!--<iframe src="" frameborder="0" name="iframeContent" style="display: none;"></iframe>-->
+                <!--<form action="/s" method="get" target="iframeContent">-->
+
+                <div class="search bar7">
+                    <form action="/s" method="get">
+                        <!--<label for="search">查找市场</label>-->
+                        <input type="search" name="wd" id="search" placeholder="请输入市场名，例如：上证指数、黄金">
+                        <button type="submit"></button>
+                    </form>
+                </div>
+                <h4 style="text-align:center">市场评分由<a href="https://mp.weixin.qq.com/s/DWcvnNTaQ5IWIYN_CeQ8rA">海龟三号AI</a>评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
+                <h4 style="text-align:center"><a href="https://mp.weixin.qq.com/s/giZkEI_T7jY4nA8ABqf8XA">AI预测接口文档AI Prediction API Document</a></h4>
+                <table border="0">
+                    <tr class="head">
+                        <th><center>序号No</center></th>
+                        <th>市场Market</th>
+                        <th>预测Prediction</th>
+                        <th>评分Score</th>
+                        <th>UTC日期Date</th>
+                        <th>开盘价Open</th>
+                        <th>最高价High</th>
+                        <th>最低价Low</th>
+                        <th><b>当前价Current</b></th>
+                        <th>成交量Volume</th>
+                        <th>今日上涨Today</th>
+                        <th>年化收益Annualised</th>
+                    </tr>
+                    <tr v-for="market in markets" :class="market.Class">
+                        <td><center>{{market.ItemNo}}</center></td>
+                        <td><a :class="market.Class" :href='market.Symbol'>{{market.Market}}</a></td>
+                        <td>{{market.Side}}</td>
+                        <td>{{market.Score}}</td>
+                        <td>{{market.Date}}</td>
+                        <td>{{market.Open}}</td>
+                        <td>{{market.High}}</td>
+                        <td>{{market.Low}}</td>
+                        <td><b>{{market.Close}}</b></td>
+                        <td>{{market.Volume}}</td>
+                        <td>{{market.Rise}}</td>
+                        <th>{{market.Annualised}}</th>
+                    </tr>
+                </table>
+                <div id="footer">联系AI纪元-预测线：forcastline@163.com</div>
+                <div id="footer">京ICP备20013339号</div>
+            </div>
+        </div>
+    </div>
+    <!--我是优雅的分界线，上面是Vue的界面下面是Vue的数据-->
+    <script>
+        //读取url参数
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) { return pair[1]; }
+            }
+            return (false);
+        }
+        //读取l(list)参数
+        listname = getQueryVariable("l")
+
+        var vue_app = new Vue({
+            el: '#vue_app',
+            data: {
+                donate: '冯*俊 赞助10元 2020年5月23日                                                                                                                                '
+                    + '刘*超 赞助200元 2020年5月23日                                                                                                                                '
+                    + '张*勇 赞助50元 2020年5月25日                                                                                                                                '
+                    + '熊*添 赞助1000元 2020年5月23日                                                                                                                                '
+                    + '秦汉 赞助100元 2020年5月25日                                                                                                                                '
+                    + '赵磊 赞助12.34元 2020年5月25日                                                                                                                               '
+                    + '于*万 赞助1元 2020年5月25日                                                                                                                               '
+                    + '徐坚 赞助8.88元 2020年5月29日',
+                market_type: "加密货币",
+                market_ref2: "currencies.html",
+                market_type2: "外汇",
+                market_ref3: "indices.html",
+                market_type3: "全球股指",
+                market_ref4: "commodities.html",
+                market_type4: "商品期货",
+                market_ref5: "stocks.html",
+                market_type5: "股票",
+                market_ref6: "stocksUS.html",
+                market_type6: "美国股票",
+                market_ref7: "stocksHK.html",
+                market_type7: "香港股票",
+                localtime: "2020-06-20 20:00:00",
+                markets: [{
+                    Class: "rise", ItemNo: 1, Market: "BTC", Symbol: "BTC.html", Side: "即将上涨", Score: 71.21, Date: "2020-06-20", Open: 9200, High: 9300, Low: 9100, Close: 9210, Volume: 10234, Rise: "0%", Annualised: "100%"
+                }, {
+                    Class: "fall", ItemNo: 2, Market: "ETH", Symbol: "ETH.html", Side: "即将下跌", Score: 35.28, Date: "2020-06-20", Open: 230, High: 240, Low: 228, Close: 234, Volume: 731270, Rise: "0%", Annualised: "80%"
+                }]
+            },
+            mounted() {
+                axios
+                    .get('/api/donate')
+                    .then(response => (this.donate = response));
+                axios
+                    .get('/api/?l=' + listname)
+                    .then(response => {
+                        this.market_type = response.market_type
+                        //市场类型2
+                        this.market_ref2 = response.market_ref2
+                        this.market_type2 = response.market_type2
+                        //市场类型3
+                        this.market_ref3 = response.market_ref3
+                        this.market_type3 = response.market_type3
+                        //市场类型4
+                        this.market_ref4 = response.market_ref4
+                        this.market_type4 = response.market_type4
+                        //市场类型5
+                        this.market_ref5 = response.market_ref5
+                        this.market_type5 = response.market_type5
+                        //市场类型6
+                        this.market_ref6 = response.market_ref6
+                        this.market_type6 = response.market_type6
+                        //市场类型7
+                        this.market_ref7 = response.market_ref7
+                        this.market_type7 = response.market_type7
+                        //数据更新时间
+                        this.localtime = response.localtime
+                        //市场列表
+                        this.markets = response.markets
+                    })
+            }
+        })
+
+    </script>
+</body>
+</html>

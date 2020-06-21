@@ -57,10 +57,10 @@
                 <div class="container-top" id="list">
                     <ul>
                         <li class="select">30天 30Days</li>
-                        <li>60天 60Days</li>
-                        <li>120天 120Days</li>
-                        <li>240天 240Days</li>
-                        <li>全部 ALL</li>
+                        <li class="unselect">60天 60Days</li>
+                        <li class="unselect">120天 120Days</li>
+                        <li class="unselect">240天 240Days</li>
+                        <li class="unselect">全部 ALL</li>
                     </ul>
                 </div>
                 <div class="container-bottom" id="item">
@@ -78,7 +78,8 @@
             </div>
 
             <div align="center">
-                <h4>市场评分由<a href="https://mp.weixin.qq.com/s/DWcvnNTaQ5IWIYN_CeQ8rA">海龟三号AI</a>评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
+                <h4 style="text-align:center">市场评分由<a href="https://mp.weixin.qq.com/s/DWcvnNTaQ5IWIYN_CeQ8rA">海龟三号AI</a>评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
+                <h4 style="text-align:center"><a href="https://mp.weixin.qq.com/s/giZkEI_T7jY4nA8ABqf8XA">AI预测接口文档AI Prediction API Document</a></h4>
                 <table border="0">
                     <tr class="head">
                         <th>日期Date</th>
@@ -312,7 +313,7 @@
                 .text("余额Balance")
                 .attr("transform", "translate(" + (g_width - 20) + ",0) rotate(-90)")
                 .attr("dy", "1em")
-                .attr("fill","LightSkyBlue")
+                .attr("fill","DeepPink")
                 .attr("text-anchor", "end")
 
             tooltip = d3.select('#tooltip');
@@ -556,7 +557,7 @@
 
             function switchbox() {
                 for (var j = 0, len = items.length; j < len; j++) {
-                    items[j].className = "";
+                    items[j].className = "unselect";
                     divs[j].style.display = "none";
                 }
                 this.className = "select";

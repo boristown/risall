@@ -51,7 +51,7 @@ def generate_market_html(title, html_name, market_name,
 if __name__ == "__main__":
     html_name = {
         "外汇":"currencies.html",
-        "加密货币":"index.html",
+        "加密货币":"crypto.html",
         "全球股指":"indices.html",
         "商品期货":"commodities.html",
         "股票":"stocks.html",

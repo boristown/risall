@@ -13,8 +13,12 @@ html, body {
 body {
     background-color: #000000;
     color: #ffffff;
+    text-align:center;
 }
 
+td {
+    text-align: center;
+}
 
 tr.head {
     background-color: #000000;
@@ -61,11 +65,25 @@ a:link {
 }
 
 a.rise:link {
-    color: #eeeeee;
+    color: #dddddd;
 }
 
 a.fall:link {
-    color: #111111;
+    color: #222222;
+}
+
+a:visited {
+    color: #8962d8;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a.rise:visited {
+    color: #bbbbbb;
+}
+
+a.fall:visited {
+    color: #444444;
 }
 
 a:hover {
@@ -80,20 +98,6 @@ a.rise:hover {
 
 a.fall:hover {
     color: #000000;
-}
-
-a:visited {
-    color: #8962d8;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-a.rise:visited {
-    color: #dddddd;
-}
-
-a.fall:visited {
-    color: #222222;
 }
 
 div.fixed_div {
@@ -129,7 +133,7 @@ div.container-tab {
 
 
         div.container-tab.balance {
-            fill: LightSkyBlue;
+            fill: DeepPink;
         }
 
 path.priceerea {
@@ -140,7 +144,7 @@ path.priceerea {
 }
 
     path.balanceerea {
-        fill: LightSkyBlue;
+        fill: DeepPink;
         fill-opacity: 0.5;
     }
 
@@ -149,7 +153,7 @@ g.price {
     fill-opacity: 1;
 }
 g.balance {
-    fill: LightSkyBlue;
+    fill: DeepPink;
     fill-opacity: 1;
 }
 
@@ -217,7 +221,7 @@ li {
     opacity: 0;
 }
 #simulationbalance {
-    color:LightSkyBlue;
+    color:DeepPink;
     opacity: 0;
 }
 .hidewhensimulation {
@@ -325,7 +329,7 @@ li {
     margin-left: 2px;
 }
 #tooltipbalance {
-    color: LightSkyBlue;
+    color: DeepPink;
     margin-left: 2px;
 }
 .container-top ul li {
@@ -335,7 +339,6 @@ li {
     line-height: 60px;
     text-align: center;
     /*background-image: linear-gradient(to right,dimgray,gray);*/
-    background-color: #48D1CC;
 }
 
 .container-bottom ul {
@@ -356,6 +359,12 @@ li {
     /*background-image: linear-gradient(to right,dimgray,gray);*/
     background-image: linear-gradient(to right,#000000,#000000);
     color: white;
+}
+
+.unselect {
+    /*background-image: linear-gradient(to right,dimgray,gray);*/
+    background-image: linear-gradient(to right,#48D1CC,#48D1CC);
+    color: DarkSlateBlue;
 }
 
 
@@ -389,37 +398,87 @@ button {
 
 /*搜索框7*/
 .bar7 {
-    background: #7BA7AB;
+    /*background: #7BA7AB;*/
+    background: #222222;
 }
 
-    .bar7 form {
-        height: 52px;
+.bar7 form {
+    height: 52px;
+}
+
+.bar7 input {
+    width: 400px;
+    border-radius: 42px;
+    border: 2px solid #324B4E;
+    background: #F9F0DA;
+    transition: .3s linear;
+    float: right;
+    transform: translateX(50px);
+}
+
+.bar7 input:focus {
+    width: 500px;
+}
+
+.bar7 button {
+    background: none;
+    top: -2px;
+    right: 0;
+    transform: translateX(50px);
+}
+
+.bar7 button:before {
+    content: "\f002";
+    font-family: FontAwesome;
+    color: #324b4e;
+}
+
+/*首页Logo样式*/
+table.indextable img{
+    width: 10em;
+    height: 10em;
+}
+
+/*首页的浮动信息框*/
+table.floatindextable {
+    border: none;
+    /*float: left;*/
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 36em;
+    height: 16em
+}
+
+/*首页的浮动信息框首行*/
+    table.floatindextable th {
+        background-color: white;
+        color: black;
+        height: 3em;
     }
 
-    .bar7 input {
-        width: 400px;
-        border-radius: 42px;
-        border: 2px solid #324B4E;
-        background: #F9F0DA;
-        transition: .3s linear;
-        float: right;
-        transform: translateX(50px);
-    }
+/*首页的浮动信息框明细行*/
+table.floatindextable tr {
+    height: 3em;
+}
 
-        .bar7 input:focus {
-            width: 500px;
-        }
+/*首页的浮动信息框明细行文本*/
+table.floatindextable tr td > span {
+    /*滤镜：颜色反转*/
+    filter: invert(100%);
+}
 
-    .bar7 button {
-        background: none;
-        top: -2px;
-        right: 0;
-        transform: translateX(50px);
-    }
+/*首页的浮动信息框--市场名*/
+table.floatindextable td.symbol {
+    width: 20em
+}
 
-        .bar7 button:before {
-            content: "\f002";
-            font-family: FontAwesome;
-            color: #324b4e;
-        }
+/*首页的浮动信息框--预测*/
+table.floatindextable td.predict {
+    width: 8em
+}
 
+/*首页的浮动信息框--年化*/
+table.floatindextable td.annualised {
+    width: 8em
+}

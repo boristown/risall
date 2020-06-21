@@ -56,12 +56,15 @@
     <Content Include="static\template\market.html" />
     <Content Include="static\template\searchTemplate.html" />
     <Content Include="static\template\template.html" />
+    <Content Include="static\vue\index.html" />
+    <Content Include="static\vue\vue_index.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="python\" />
     <Folder Include="static\" />
     <Folder Include="static\js\" />
     <Folder Include="static\template\" />
+    <Folder Include="static\vue\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
