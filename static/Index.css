@@ -3,7 +3,7 @@ html, body {
     margin: 0px;
     width: 100%;
     height: 100%;
-    touch-action: none;
+    /*touch-action: none;*/
 }
 
 /*html {
@@ -32,10 +32,18 @@ tr.rise {
     padding: 5px;
 }
 
+tr.rise:hover {
+    background-color: #ef0464 !important;
+}
+
 tr.fall {
     background-color: #ffffff;
     color: #000000;
     padding: 5px;
+}
+
+tr.fall:hover {
+    background-color: #13d30b !important;
 }
 
 h3.donate {
@@ -43,9 +51,11 @@ h3.donate {
     background-repeat: repeat-x;
     -webkit-background-clip: text;
     color: transparent;*/
-    color: #38abfb;
+    color: #cf38fb;
     opacity: 1;
     font-family: "楷体","楷体_GB2312";
+    white-space: pre;
+    display: inline;
 }
 
 h2.donate {
@@ -53,9 +63,11 @@ h2.donate {
     background-repeat: repeat-x;
     -webkit-background-clip: text;
     color: transparent;*/
-    color: #38abfb;
+    color: #cf38fb;
     opacity: 1;
     font-family: "楷体","楷体_GB2312";
+    white-space: pre;
+    display: inline;
 }
 
 a:link {
@@ -108,6 +120,7 @@ div.fixed_div {
     right: 0px;
     height: 20px;
     background: transparent;
+    pointer-events: none;
 }
 
 .virtual_body {
@@ -117,7 +130,7 @@ div.fixed_div {
     overflow-x: auto;
 }
 
-div.container-tab {
+div.d3chart {
     background: #000000;
     color: white;
     width: 100%;
@@ -126,15 +139,13 @@ div.container-tab {
     fill: #fff;
 }
 
+#pricesvgchart .price {
+    fill: Turquoise;
+}
 
-    div.container-tab.price {
-        fill: Turquoise;
-    }
-
-
-        div.container-tab.balance {
-            fill: DeepPink;
-        }
+#pricesvgchart .balance {
+    fill: DeepPink;
+}
 
 path.priceerea {
     fill: Turquoise;
@@ -143,15 +154,16 @@ path.priceerea {
     fill-opacity:0.5
 }
 
-    path.balanceerea {
-        fill: DeepPink;
-        fill-opacity: 0.5;
-    }
+path.balanceerea {
+    fill: DeepPink;
+    fill-opacity: 0.5;
+}
 
 g.price {
     fill: Turquoise;
     fill-opacity: 1;
 }
+
 g.balance {
     fill: DeepPink;
     fill-opacity: 1;
@@ -204,26 +216,32 @@ li {
     text-align:center;
     display: block;
 }
+
 #simulationsymbol {
     color:#20B2AA;
     opacity: 0;
 }
+
 #simulationtitle {
     color:#7FFFAA;
     opacity: 0;
 }
+
 #simulationday {
     color:#40E0D0;
     opacity: 0;
 }
+
 #simulationdate {
     color:orange;
     opacity: 0;
 }
+
 #simulationbalance {
     color:DeepPink;
     opacity: 0;
 }
+
 .hidewhensimulation {
     opacity: 1;
 }
@@ -324,17 +342,20 @@ li {
     color: orange;
     margin-left: 2px;
 }
+
 #tooltipprice {
     color: Turquoise;
     margin-left: 2px;
 }
+
 #tooltipbalance {
     color: DeepPink;
     margin-left: 2px;
 }
+
 .container-top ul li {
     float: left;
-    width: 20%;
+    width: 33%;
     height: 60px;
     line-height: 60px;
     text-align: center;
@@ -374,8 +395,9 @@ div.search {
 
 form {
     position: relative;
-    width: 300px;
+    width: auto;
     margin: 0 auto;
+    display: inline-block;
 }
 
 input, button {
@@ -412,73 +434,227 @@ button {
     border: 2px solid #324B4E;
     background: #F9F0DA;
     transition: .3s linear;
-    float: right;
-    transform: translateX(50px);
+    font-size: 0.8em;
+    height: 4em;
+    float: left;
+    padding: 0 1em;
+    /*transform: translateX(-50px);*/
 }
 
 .bar7 input:focus {
     width: 500px;
+    /*transform: translateX(-50px);*/
 }
 
 .bar7 button {
     background: none;
-    top: -2px;
-    right: 0;
-    transform: translateX(50px);
+    /*top: -1em;*/
+    /*top: 0.5em;*/
+    right: 1em;
+    font-size:0.8em;
+    float: left;
+    position: absolute;
+    /*transform: translateX(-50px);*/
 }
 
-.bar7 button:before {
+.bar7 button:after {
     content: "\f002";
     font-family: FontAwesome;
     color: #324b4e;
 }
 
 /*首页Logo样式*/
-table.indextable img{
+table.indextable img {
+    animation: fadein10 3s;
     width: 10em;
     height: 10em;
 }
 
 /*首页的浮动信息框*/
 table.floatindextable {
+    animation: fadein10 0.75s;
     border: none;
     /*float: left;*/
     display: inline-block;
     margin-left: auto;
     margin-right: auto;
     width: 36em;
-    height: 16em
+    height: 26em;
+    table-layout: fixed;
 }
 
 /*首页的浮动信息框首行*/
-    table.floatindextable th {
-        background-color: white;
-        color: black;
-        height: 3em;
-    }
-
-/*首页的浮动信息框明细行*/
-table.floatindextable tr {
+table.floatindextable tr th {
+    background-color: white;
+    color: black;
     height: 3em;
 }
 
+table.floatindextable tr th:hover {
+    background-color: #0b92d3 !important;
+}
+
+/*首页的浮动信息框次行*/
+table.floatindextable tr + tr th {
+    background-color: black;
+    color: white;
+    height: 3em;
+}
+
+/*table.floatindextable tr + tr th:hover {
+    background-color: #13d30b !important;
+}*/
+
+/*首页的浮动信息框明细行*/
+table.floatindextable tr td {
+    height: 6em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /*white-space: nowrap;*/
+}
+
 /*首页的浮动信息框明细行文本*/
-table.floatindextable tr td > span {
-    /*滤镜：颜色反转*/
-    filter: invert(100%);
+    table.floatindextable tr td > span {
+        animation: fadein10 0.5s;
+        /*滤镜：颜色反转*/
+        /*filter: invert(100%);*/
+        height: 6em;
+        overflow: hidden;
+        text-overflow: clip;
+        /*white-space: nowrap;*/
+    }
+
+/*首页的浮动信息框明细行文本不换行*/
+table.floatindextable tr td > span  p
+{
+    padding: 0px;
+    margin: 0em;
+    display: inline-block;
 }
 
 /*首页的浮动信息框--市场名*/
 table.floatindextable td.symbol {
-    width: 20em
+    width: 22em;
+    font-size: 1em
 }
 
 /*首页的浮动信息框--预测*/
 table.floatindextable td.predict {
-    width: 8em
+    width: 7em
 }
 
 /*首页的浮动信息框--年化*/
 table.floatindextable td.annualised {
-    width: 8em
+    width: 7em
 }
+
+table.floatindextable tr:hover {
+    background-color: #13d30b !important;
+}
+
+table.floatindextable tr:hover td {
+    background-color: none !important;
+}
+
+table.floatindextable tr:hover th {
+    background-color: none !important;
+}
+
+.Intro1 {
+    animation: fadein06 1s;
+    opacity: 0.6;
+}
+
+.Intro2 {
+    animation: fadein06 2s;
+    opacity: 0.6;
+}
+
+.Intro3 {
+    animation: fadein06 3s;
+    opacity: 0.6;
+}
+
+.Intro4 {
+    animation: fadein06 4s;
+    opacity: 0.6;
+}
+
+/*悬浮动画*/
+.animationdiv {
+    height: 300px;
+    width: 98vw;
+    border: none;
+    position: absolute;
+    left: 1vw;
+    top: 100px;
+    pointer-events: none;
+}
+
+/*全屏动画*/
+.fullscreenanimation {
+    height: 100vh;
+    width: 100vw;
+    border: 2px solid pink;
+    position: absolute;
+    left: 0vw;
+    top: 0vh;
+    pointer-events: none;
+}
+
+/*分页*/
+.page-bar {
+    /*margin: 40px auto;*/
+    margin-top: 20px;
+}
+
+.page-bar ul, li {
+    margin: 0px;
+    padding: 0px;
+}
+
+.page-bar li {
+    list-style: none;
+    display: inline;
+}
+
+.page-bar li:first-child > a {
+    margin-left: 0px
+}
+
+.page-bar a {
+    border: 1px solid #505050;
+    text-decoration: none;
+    position: relative;
+    /*float: left;*/
+    display: inline;
+    padding: 6px 12px;
+    margin-left: -1px;
+    line-height: 1.42857143;
+    color: #cdd6db;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+    .page-bar a:hover {
+        background-color: #505050;
+        color: #fff;
+    }
+
+.page-bar a.banclick {
+    cursor: not-allowed;
+}
+
+    .page-bar .active a {
+        color: #000;
+        cursor: default;
+        background-color: #8ca8ff;
+        border-color: #8ca8ff;
+    }
+
+    .page-bar i {
+        font-style: normal;
+        color: #8ca8ff;
+        margin: 0px 4px;
+        font-size: 12px;
+    }

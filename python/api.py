@@ -183,6 +183,7 @@ def pfx_to_pem(pfx_path, pfx_password):
         f_pem.close()
         yield t_pem.name
 
+
 # 设置路由
 api.add_resource(TodoList, '/todos')
 api.add_resource(Todo, '/todos/<todo_id>')
@@ -190,7 +191,7 @@ api.add_resource(Search, '/api/search')
 
 @app.route('/')
 def home():
-    return app.send_static_file("index.html")
+    return app.send_static_file("vue/index.html")
 
 @app.route('/vue')
 def vuehome():
@@ -243,6 +244,87 @@ market_type = {
     "香港股票":"香港股票HK Stocks",
     }
 
+@app.route('/api/m', methods=['post','get'])
+def getmarket():
+    #Market Name
+    marketid = request.args.get("id")
+    #Page Index
+    pageindex = request.args.get("pageindex")
+    #Page Size
+    pagesize = request.args.get("pagesize")
+    #donates
+    donates = []
+
+    #Market_type
+    market_type, market_name = mydb.getmarkettype(marketid)
+    
+    #Get market prices
+    marketprices, annualised, pagetotal, startdate = mydb.get_market_prices_limit(marketid, pageindex, pagesize)
+    
+    if len(marketprices) == 0:
+        return {}
+    price_list = [{"date":marketprice["Date"],"close":marketprice["Close"], "balance":marketprice["Balance"]} for marketprice in marketprices][-1::-1]
+    
+    price_lists = []
+    #price_lists.append(price_list[-30:])
+    #price_lists.append(price_list[-60:])
+    #price_lists.append(price_list[-120:])
+    #price_lists.append(price_list[-240:])
+    price_lists.append(price_list)
+    datelist = [marketprice["Date"] for marketprice in marketprices][-1::-1]
+    valuelist = price_list
+    data_dict = dict(zip(datelist, valuelist))
+    #日期插值
+    mindate = datetime.datetime.strptime(datelist[0], "%Y-%m-%d")
+    maxdate = datetime.datetime.strptime(datelist[-1], "%Y-%m-%d")
+    currentdate = mindate
+    lastitem = price_list[0]
+    while currentdate <= maxdate:
+        currentdatestr = currentdate.strftime("%Y-%m-%d")
+        if currentdatestr not in data_dict:
+            data_dict[currentdatestr] = lastitem
+        else:
+            lastitem = data_dict[currentdatestr]
+        currentdate += datetime.timedelta(days=1)
+
+
+    #Make donate bar
+    for i in range(10):
+        for donateitem in donate.donate:
+            donates.append(donateitem)
+
+    #Donates
+    for  i in range(len(donates)):
+        donates[i] = "<span>" + donates[i] + "                                         </span>"
+    
+    donatestr = ''.join(donates)
+
+    #local time
+    localtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+
+    #title
+    title = u"AI预测：" + market_name +"--预测线forcastline.com"
+
+    #market prediction
+    market_prediction = "今日操作：" + marketprices[0]["Prediction"] +  " 年化：" + str(round(annualised * 100, 2)) + "%"
+
+    #Result dict
+    resultdict = {
+        "title": title,
+        "donate": donatestr,
+        "market_type":market_type,
+        "market_type_ref" : "../" + html_name[market_type],
+        "market_name":market_name,
+        "market_prediction":market_prediction,
+        "localtime":localtime,
+        "tableitems":marketprices,
+        "pagetotal": pagetotal,
+        "price_list":price_lists,
+        "data_dict":data_dict,
+        "startdate": startdate
+        }
+    return resultdict
+
 @app.route('/api/l', methods=['post','get'])
 def getlist():
     listname = request.args.get("name")
@@ -276,17 +358,18 @@ def getlist():
             "Close":indexline[6],
             "Volume":volume,
             "Rise":str(round((indexline[6] / indexline[3] - 1) * 100, 2)) + "%",
-            "Side":indexline[8],
+            "Side": '<span><p>'+indexline[8]+'</p></span>',
             "Score":round(indexline[9],2),
             "Class":'rise' if '涨' in indexline[8] else 'fall',
             "Symbol":"market.html?symbol="+indexline[10],
             "Annualised": annualised,
-            "Color": indexline[13]
+            "BgColor": indexline[13],
+            "Color": indexline[14]
             }
         body.append(result)
     #body.sort(reverse = True, key = lambda line:(line["Annualised"], line["Score"]))
     for bodyitem in body:
-        bodyitem["Annualised"] = str(round(bodyitem["Annualised"] * 100, 2)) + "%"
+        bodyitem["Annualised"] = "<span><p>"+ str(round(bodyitem["Annualised"] * 100, 2)) + "%</p></span>"
     itemNo = 0
     for indexline in body:
         itemNo += 1

@@ -99,13 +99,26 @@ def get_index_list_limit(market_key, maxrows):
     list_results = mycursor.fetchall()
     lineno = 0
     hmin = 0.0
-    hmax = 0.6667
-    hrange = hmax-hmin
+    hmax = 240.0
+    hcenter = (hmax+hmin)/2.0
+    hrange = (hmax-hmin)/2.0
     for list_result in list_results:
         lineno += 1
-        hscore = list_result[8] / 100
-        hposition = hrange * hscore
-        colorhex = hsv2rgb(hmin + hposition,0.9, hscore)
+        #if '涨' in list_result[7]:
+        #    hscore = list_result[8] / 100 - 1
+        #else:
+        #    hscore = list_result[8] / 100
+
+        #hposition = hrange * hscore
+        #colorhex = hsv2rgb(hcenter + hposition, 0.9, (hscore + 1.0)/2)
+        if '涨' in list_result[7]:
+            #colorhex = hsv2rgb(hmin, 0.9, list_result[8] / 100)
+            bgcolorhex = '#dddddd'
+            colorhex = '#222222'
+        else:
+            #colorhex = hsv2rgb(hmax, 0.9, list_result[8] / 100)
+            bgcolorhex = '#222222'
+            colorhex = '#dddddd'
         index_list.append([
             lineno, #line no
             list_result[0], #symboll_alias
@@ -120,6 +133,7 @@ def get_index_list_limit(market_key, maxrows):
             list_result[9], #symbol
             list_result[10], #basesymbol(弃用)
             list_result[11], #Annualised
+            bgcolorhex, #Bgcolor
             colorhex, #color
             ])
     return index_list
@@ -177,6 +191,154 @@ def get_market_list(market_key):
             list_result[1]
             ])
     return market_list
+
+#Get Market Type
+def getmarkettype(market_id):
+    myconnector, mycursor = init_mycursor()
+    select_statement = '''
+    SELECT MARKET_TYPE, group_concat(symbol_alias) 
+    FROM SYMBOL_ALIAS
+    WHERE SYMBOL = '%s'
+    group by symbol;
+    ''' % (market_id)
+    mycursor.execute(select_statement)
+    select_results = mycursor.fetchall()
+    for result in select_results:
+        markettype = result[0]
+        marketname = result[1]
+    return markettype, marketname
+
+def get_market_prices_limit(market_id, pageindex, pagesize):
+    market_list = []
+    myconnector, mycursor = init_mycursor()
+    pagesize = int(pagesize)
+    pageindex = int(pageindex)
+    offset = int(pagesize) * ( int(pageindex) - 1 )
+    if offset < 0 :
+        offset = 0
+    
+    count_statement = '''
+    SELECT count(*) 
+    FROM zeroai.pricehistory where symbol = '%s'  and o > 0 and l > 0 and c > 0 and h < l * 10 and c >= l and c <= h 
+    ;
+    ''' % (market_id)
+    mycursor.execute(count_statement)
+    count_results = mycursor.fetchall()
+
+    for count_result in count_results:
+        pagetotal = count_result[0]
+
+    pagetotal = math.ceil(pagetotal * 1.0 / pagesize)
+
+    list_statement = '''
+    select * from (SELECT DATE_FORMAT(date, "%%Y-%%m-%%d") as date, O, H, L, C, V, if(F>=0.5,"做多Buy","做空Sell") as side, abs((F*2-1)*100) as score, ATR, balance, days , date as datetime
+    FROM zeroai.pricehistory where symbol = '%s'  and o > 0 and l > 0 and c > 0 and h < l * 10 and c >= l and c <= h 
+    order by date desc limit %s, %s) a
+    order by date asc;
+    ''' % (market_id, str(offset), str(pagesize))
+    mycursor.execute(list_statement)
+    list_results = mycursor.fetchall()
+
+    last_c = 0
+    tr0list = [] #TR0清单
+    orderlist = [] #持有清单
+    lineno = 0
+    atr = 0.0
+    balance = 1.0
+    for list_result in list_results:
+        Date = list_result[0]
+        Open = list_result[1]
+        High = list_result[2]
+        Low = list_result[3]
+        Close = list_result[4]
+        balance = list_result[9]
+        if last_c == 0:
+            last_c = Open #Open Price
+        tr = max(High, last_c) / min(Low, last_c) - 1.0
+        if tr > 9.0 or tr == 0:
+            continue
+        lineno += 1
+        tr0 = tr / 120.0
+        #添加最新TR0值
+        tr0list.append(tr0)
+        atr += tr0
+        if lineno > 120:
+            #删除120天前的TR0值
+            atr -= tr0list.pop(0)
+        last_c = Close
+        if list_result[7] > 0 and atr > 0:
+            #模拟交易
+            for oldorder in orderlist:
+                if 'Buy' in oldorder["Prediction"]:#buy 
+                    if Low < oldorder["StopPrice"]:#Stop
+                        oldorder["StopDate"] = Date
+                        quantity = oldorder["Balance"] * 0.01 / oldorder["Close"] / oldorder["ATR"]
+                        buyamount = quantity * oldorder["Close"]
+                        sellamount = quantity * oldorder["StopPrice"]
+                        Profit = sellamount - buyamount
+                        #balance += Profit
+                        if balance < 0:
+                            balance = 0
+                        else:
+                            oldorder["Profit"] = str(round(Profit / oldorder["Balance"] * 100, 3)) + '%' if oldorder["Balance"] > 0 else '0%'
+                        orderlist.remove(oldorder)
+                        continue
+                    else:
+                        oldorder["TrailingPrice"] = max(oldorder["TrailingPrice"], High)
+                        oldorder["StopPrice"] = oldorder["TrailingPrice"] / (atr + 1)
+                else:#sell
+                    if High > oldorder["StopPrice"]:#Stop
+                        oldorder["StopDate"] = Date
+                        quantity = oldorder["Balance"] * 0.01 / oldorder["Close"] / oldorder["ATR"]
+                        sellamount = quantity * oldorder["Close"]
+                        buyamount = quantity * oldorder["StopPrice"]
+                        Profit = sellamount - buyamount
+                        #balance += Profit
+                        if balance < 0:
+                            balance = 0
+                        else:
+                            oldorder["Profit"] = str(round(Profit / oldorder["Balance"] * 100, 3)) + '%' if oldorder["Balance"] > 0 else '0%'
+                        orderlist.remove(oldorder)
+                        continue
+                    else:
+                        oldorder["TrailingPrice"] = min(oldorder["TrailingPrice"], Low)
+                        oldorder["StopPrice"] = oldorder["TrailingPrice"] * (atr + 1)
+            neworder = {
+                "Date":list_result[0],
+                "Open":list_result[1],
+                "High":list_result[2],
+                "Low":list_result[3],
+                "Close":list_result[4],
+                "Volume":list_result[5],
+                "Today":str(round((list_result[4] / list_result[1] - 1)*100,2)) + '%',
+                "Prediction":list_result[6],
+                "Score":round(list_result[7],2),
+                "Class":'rise' if 'Buy' in list_result[6] else 'fall',
+                #"ATR": list_result[8],
+                "ATR": atr,
+                "TrailingPrice": list_result[4],
+                "StopPrice": list_result[4] / (atr + 1) if 'Buy' in list_result[6]  else (atr + 1) * list_result[4],
+                "StopDate": '-',
+                "Profit": '0.0%',
+                "Balance": balance,
+                "Days": list_result[10],
+                "Datetime": list_result[11],
+                }
+            market_list.append(neworder)
+            orderlist.append(neworder)
+
+    if len(market_list) == 0:
+        return market_list, 0.0
+    market_list.sort(reverse = True, key = lambda item:item["Date"])
+    
+    for market_item in market_list:
+        market_item["ATR"] = str(round(market_item["ATR"] * 100.0, 2)) + '%'
+
+    daycount = market_list[0]["Days"]
+    startdate = market_list[0]["Datetime"] + datetime.timedelta(days=-daycount)
+    
+    return market_list , math.pow(balance, 365.0 / daycount) - 1 if daycount > 0 else 0.0, pagetotal, startdate.strftime('%Y-%m-%d')
+
 
 def get_market_prices(market_id):
     market_list = []
@@ -283,15 +445,24 @@ def get_market_prices(market_id):
     update_val = []
     for market_item in market_list:
         market_item["ATR"] = str(round(market_item["ATR"] * 100.0, 2)) + '%'
+
+    for market_item in market_list[0:2]:
         currentdays = datetime.datetime.strptime(market_item["Date"], '%Y-%m-%d')
         #当前天数
         days = (currentdays - firstdate ).days
         update_val.append((market_item["Balance"], days, market_id, market_item["Date"]))
     #更新余额
     update_sql = "UPDATE pricehistory SET balance = %s, days = %s where SYMBOL = %s and DATE = %s "
-    mycursor.executemany(update_sql, update_val)
     
-    myconnector.commit()    # 数据表内容有更新，必须使用到该语句
+    while True:
+        try:
+            mycursor.executemany(update_sql, update_val)
+            myconnector.commit()    # 数据表内容有更新，必须使用到该语句
+            break
+        except Exception as e:
+            print(str(e))
+            myconnector.rollback( )
+            time.sleep(1)
 
     daycount = (lastdate - firstdate ).days
     

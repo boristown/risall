@@ -3,7 +3,7 @@
 <html lang="zh" xmlns="https://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
-    <title>预测线-Vue</title>
+    <title>预测线-Forcastline</title>
     <script src="../js/vue.js"></script>
     <script src="../js/axios.min.js"></script>
     <link rel="icon" href="../Logo.ico" type="image/x-icon">
@@ -12,24 +12,19 @@
     <link rel="stylesheet" href="../Index.css" type="text/css">
 </head>
 <body>
+    <!--<body onload="init()">-->
     <div id="vue_app">
         <div class="fixed_div" id="appDonate">
+            <!--<ul>
+                <li class="donateLi" v-for="donate in donates" v-html="donate" />
+            </ul>-->
             <marquee scrollamount=10>
-                <h3 class="donate" style='white-space:pre;'>{{donate}}</h3>
+                <h3 class="donate" v-for="donate in donates" v-html="donate"></h3>
             </marquee>
         </div>
-        <div class="virtual_body" align="center">
+        <div align="center">
             <table height="100%" width="100%" class="indextable">
-                <!--<tr height="16%">
-        <td width="14.285%"><h3><a :href="market_ref">{{market_type}}</a></h3></td>
-        <td width="14.285%"><h3><a :href="market_ref2">{{market_type2}}</a></h3></td>
-        <td width="14.285%"><h3><a :href="market_ref3">{{market_type3}}</a></h3></td>
-        <td width="14.285%"><h3><a :href="market_ref4">{{market_type4}}</a></h3></td>
-        <td width="14.285%"><h3><a :href="market_ref5">{{market_type5}}</a></h3></td>
-        <td width="14.285%"><h3><a :href="market_ref6">{{market_type6}}</a></h3></td>
-        <td width="14.285%"><h3><a :href="market_ref7">{{market_type7}}</a></h3></td>
-    </tr>-->
-                <tr height="100px">
+                <tr height="60px">
                     <td colspan="2"></td>
                 </tr>
                 <tr height="100px">
@@ -48,252 +43,243 @@
                         </div>
                     </td>
                 </tr>
-                <tr height="60px">
-                    <td colspan="2"><h2><a href="../donate.html">点击赞助AI纪元-预测线网站，您的名字将显示为弹幕。</a></h2></td>
-                </tr>
-                <tr height="150px">
+                <tr height="2em">
                     <td colspan="2">
-                        <h4 style="text-align:center">市场评分由<a href="https://mp.weixin.qq.com/s/DWcvnNTaQ5IWIYN_CeQ8rA">海龟三号AI</a>评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
-                        <h4 style="text-align:center"><a href="https://mp.weixin.qq.com/s/giZkEI_T7jY4nA8ABqf8XA">AI预测接口文档AI Prediction API Document</a></h4>
+                        <h4 class="Intro1">这不是一个行情网站，也不是一个预测网站。</h4>
+                        <h4 class="Intro1">This is not a quote website, nor a prediction website.</h4>
+                    </td>
+                </tr>
+                <tr height="2em">
+                    <td colspan="2">
+                        <h4 class="Intro2">它将经典的量化交易系统与现代AI相结合。</h4>
+                        <h4 class="Intro2">It combines the classic quantitative trading system with modern AI.</h4>
+                    </td>
+                </tr>
+                <tr height="2em">
+                    <td colspan="2">
+                        <h4 class="Intro3">目标是在长线交易中实现余额的指数增长。</h4>
+                        <h4 class="Intro3">The goal is to achieve exponential growth of the balance in long-term transactions.</h4>
+                    </td>
+                </tr>
+                <tr height="2em">
+                    <td colspan="2">
+                        <h4 class="Intro4">——AI纪元 & 预测线</h4>
+                        <h4 class="Intro4">——AI Era & Forcastline</h4>
                     </td>
                 </tr>
             </table>
             <div style="width:100%;text-align: center">
-                <table class="floatindextable">
+                <table class="floatindextable" onclick="location.href='../crypto.html'">
                     <tr>
                         <th colspan="3">
                             加密货币Crypto
                         </th>
                     </tr>
                     <tr>
-                        <td class="symbol">
+                        <th class="symbol">
                             市场名Symbol
-                        </td>
-                        <td class="predict">
+                        </th>
+                        <th class="predict">
                             预测Predict
-                        </td>
-                        <td class="annualised">
+                        </th>
+                        <th class="annualised">
                             年化Annualised
-                        </td>
+                        </th>
                     </tr>
-                    <tr v-for="market in cryptoMarkets" :style="{'background-color': market.Color, 'color': market.Color}" :class="market.Class">
-                        <td class="symbol">
-                            <span>{{market.Market}}</span>
+                    <tr v-for="market in cryptoMarkets" :style="{'background-color': market.BgColor, 'color': market.Color}" :class="market.Class">
+                        <td class="symbol" v-html="market.Market">
                         </td>
-                        <td class="predict">
-                            <span>{{market.Side}}</span>
+                        <td class="predict" v-html="market.Side">
                         </td>
-                        <td class="annualised">
-                            <span>{{market.Annualised}}</span>
+                        <td class="annualised" v-html="market.Annualised">
                         </td>
                     </tr>
                 </table>
-                <table class="floatindextable">
+                <table class="floatindextable" onclick="location.href='../currencies.html'">
                     <tr>
                         <th colspan="3">
                             外汇Currency
                         </th>
                     </tr>
                     <tr>
-                        <td class="symbol">
+                        <th class="symbol">
                             市场名Symbol
-                        </td>
-                        <td class="predict">
+                        </th>
+                        <th class="predict">
                             预测Predict
-                        </td>
-                        <td class="annualised">
+                        </th>
+                        <th class="annualised">
                             年化Annualised
-                        </td>
+                        </th>
                     </tr>
-                    <tr v-for="market in currencyMarkets" :style="{'background-color': market.Color, 'color': market.Color}" :class="market.Class">
-                        <td class="symbol">
-                            <span>{{market.Market}}</span>
+                    <tr v-for="market in currencyMarkets" :style="{'background-color': market.BgColor, 'color': market.Color}" :class="market.Class">
+                        <td class="symbol" v-html="market.Market">
                         </td>
-                        <td class="predict">
-                            <span>{{market.Side}}</span>
+                        <td class="predict" v-html="market.Side">
                         </td>
-                        <td class="annualised">
-                            <span>{{market.Annualised}}</span>
+                        <td class="annualised" v-html="market.Annualised">
                         </td>
                     </tr>
                 </table>
-                <table class="floatindextable">
+                <table class="floatindextable" onclick="location.href='../indices.html'">
                     <tr>
                         <th colspan="3">
                             全球股指Indices
                         </th>
                     </tr>
                     <tr>
-                        <td class="symbol">
+                        <th class="symbol">
                             市场名Symbol
-                        </td>
-                        <td class="predict">
+                        </th>
+                        <th class="predict">
                             预测Predict
-                        </td>
-                        <td class="annualised">
+                        </th>
+                        <th class="annualised">
                             年化Annualised
-                        </td>
+                        </th>
                     </tr>
-                    <tr v-for="market in indicesMarkets" :style="{'background-color': market.Color, 'color': market.Color}" :class="market.Class">
-                        <td class="symbol">
-                            <span>{{market.Market}}</span>
+                    <tr v-for="market in indicesMarkets" :style="{'background-color': market.BgColor, 'color': market.Color}" :class="market.Class">
+                        <td class="symbol" v-html="market.Market">
                         </td>
-                        <td class="predict">
-                            <span>{{market.Side}}</span>
+                        <td class="predict" v-html="market.Side">
                         </td>
-                        <td class="annualised">
-                            <span>{{market.Annualised}}</span>
+                        <td class="annualised" v-html="market.Annualised">
                         </td>
                     </tr>
                 </table>
-                <table class="floatindextable">
+                <table class="floatindextable" onclick="location.href='../commodities.html'">
                     <tr>
                         <th colspan="3">
                             商品期货Commodities
                         </th>
                     </tr>
                     <tr>
-                        <td class="symbol">
+                        <th class="symbol">
                             市场名Symbol
-                        </td>
-                        <td class="predict">
+                        </th>
+                        <th class="predict">
                             预测Predict
-                        </td>
-                        <td class="annualised">
+                        </th>
+                        <th class="annualised">
                             年化Annualised
-                        </td>
+                        </th>
                     </tr>
-                    <tr v-for="market in commodiesMarkets" :style="{'background-color': market.Color, 'color': market.Color}" :class="market.Class">
-                        <td class="symbol">
-                            <span>{{market.Market}}</span>
+                    <tr v-for="market in commodiesMarkets" :style="{'background-color': market.BgColor, 'color': market.Color}" :class="market.Class">
+                        <td class="symbol" v-html="market.Market">
                         </td>
-                        <td class="predict">
-                            <span>{{market.Side}}</span>
+                        <td class="predict" v-html="market.Side">
                         </td>
-                        <td class="annualised">
-                            <span>{{market.Annualised}}</span>
+                        <td class="annualised" v-html="market.Annualised">
                         </td>
                     </tr>
                 </table>
-                <table class="floatindextable">
+                <table class="floatindextable" onclick="location.href='../stocks.html'">
                     <tr>
                         <th colspan="3">
                             中国股票CN Stocks
                         </th>
                     </tr>
                     <tr>
-                        <td class="symbol">
+                        <th class="symbol">
                             市场名Symbol
-                        </td>
-                        <td class="predict">
+                        </th>
+                        <th class="predict">
                             预测Predict
-                        </td>
-                        <td class="annualised">
+                        </th>
+                        <th class="annualised">
                             年化Annualised
-                        </td>
+                        </th>
                     </tr>
-                    <tr v-for="market in stocksCNMarkets" :style="{'background-color': market.Color, 'color': market.Color}" :class="market.Class">
-                        <td class="symbol">
-                            <span>{{market.Market}}</span>
+                    <tr v-for="market in stocksCNMarkets" :style="{'background-color': market.BgColor, 'color': market.Color}" :class="market.Class">
+                        <td class="symbol" v-html="market.Market">
                         </td>
-                        <td class="predict">
-                            <span>{{market.Side}}</span>
+                        <td class="predict" v-html="market.Side">
                         </td>
-                        <td class="annualised">
-                            <span>{{market.Annualised}}</span>
+                        <td class="annualised" v-html="market.Annualised">
                         </td>
                     </tr>
                 </table>
-                <table class="floatindextable">
+                <table class="floatindextable" onclick="location.href='../stocksUS.html'">
                     <tr>
                         <th colspan="3">
                             美国股票US Stocks
                         </th>
                     </tr>
                     <tr>
-                        <td class="symbol">
+                        <th class="symbol">
                             市场名Symbol
-                        </td>
-                        <td class="predict">
+                        </th>
+                        <th class="predict">
                             预测Predict
-                        </td>
-                        <td class="annualised">
+                        </th>
+                        <th class="annualised">
                             年化Annualised
-                        </td>
+                        </th>
                     </tr>
-                    <tr v-for="market in stocksUSMarkets" :style="{'background-color': market.Color, 'color': market.Color}" :class="market.Class">
-                        <td class="symbol">
-                            <span>{{market.Market}}</span>
+                    <tr v-for="market in stocksUSMarkets" :style="{'background-color': market.BgColor, 'color': market.Color}" :class="market.Class">
+                        <td class="symbol" v-html="market.Market">
                         </td>
-                        <td class="predict">
-                            <span>{{market.Side}}</span>
+                        <td class="predict" v-html="market.Side">
                         </td>
-                        <td class="annualised">
-                            <span>{{market.Annualised}}</span>
+                        <td class="annualised" v-html="market.Annualised">
                         </td>
                     </tr>
                 </table>
-                <table class="floatindextable">
+                <table class="floatindextable" onclick="location.href='../stocksHK.html'">
                     <tr>
                         <th colspan="3">
                             香港股票HK Stocks
                         </th>
                     </tr>
                     <tr>
-                        <td class="symbol">
+                        <th class="symbol">
                             市场名Symbol
-                        </td>
-                        <td class="predict">
+                        </th>
+                        <th class="predict">
                             预测Predict
-                        </td>
-                        <td class="annualised">
+                        </th>
+                        <th class="annualised">
                             年化Annualised
-                        </td>
+                        </th>
                     </tr>
-                    <tr v-for="market in stocksHKMarkets" :style="{'background-color': market.Color, 'color': market.Color}" :class="market.Class">
-                        <td class="symbol">
-                            <span>{{market.Market}}</span>
+                    <tr v-for="market in stocksHKMarkets" :style="{'background-color': market.BgColor, 'color': market.Color}" :class="market.Class">
+                        <td class="symbol" v-html="market.Market">
                         </td>
-                        <td class="predict">
-                            <span>{{market.Side}}</span>
+                        <td class="predict" v-html="market.Side">
                         </td>
-                        <td class="annualised">
-                            <span>{{market.Annualised}}</span>
+                        <td class="annualised" v-html="market.Annualised">
                         </td>
                     </tr>
                 </table>
+                <h4 style="text-align:center">市场评分由<a href="https://mp.weixin.qq.com/s/DWcvnNTaQ5IWIYN_CeQ8rA">海龟三号AI</a>评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
+                <h4 style="text-align:center"><a href="https://mp.weixin.qq.com/s/giZkEI_T7jY4nA8ABqf8XA">AI预测接口文档AI Prediction API Document</a></h4>
+                <h4><a href="../donate.html">点击赞助AI纪元-预测线网站，您的名字将显示为弹幕。</a></h4>
                 <div id="footer">联系AI纪元-预测线：forcastline@163.com</div>
                 <div id="footer">京ICP备20013339号</div>
             </div>
         </div>
     </div>
     <!--我是优雅的分界线，上面是Vue的界面下面是Vue的数据-->
+    <script src='../js/common.js' charset="utf-8"></script>
     <script>
         //import axios from 'axios';
-        //读取url参数
-        function getQueryVariable(variable) {
-            var query = window.location.search.substring(1);
-            var vars = query.split("&");
-            for (var i = 0; i < vars.length; i++) {
-                var pair = vars[i].split("=");
-                if (pair[0] == variable) { return pair[1]; }
-            }
-            return (false);
-        }
         //读取l(list)参数
         listname = getQueryVariable("l")
 
         var vue_app = new Vue({
             el: '#vue_app',
             data: {
-                donate: '冯*俊 赞助10元 2020年5月23日                                                                                                                                '
-                    + '刘*超 赞助200元 2020年5月23日                                                                                                                                '
-                    + '张*勇 赞助50元 2020年5月25日                                                                                                                                '
-                    + '熊*添 赞助1000元 2020年5月23日                                                                                                                                '
-                    + '秦汉 赞助100元 2020年5月25日                                                                                                                                '
-                    + '赵磊 赞助12.34元 2020年5月25日                                                                                                                               '
-                    + '于*万 赞助1元 2020年5月25日                                                                                                                               '
-                    + '徐坚 赞助8.88元 2020年5月29日',
+                //donates: [
+                //    "                           冯*俊 赞助10元 2020年5月23日",
+                //    "                           刘*超 赞助200元 2020年5月23日",
+                //    "                           张*勇 赞助50元 2020年5月25日",
+                //    "                           熊*添 赞助1000元 2020年5月23日",
+                //    "                           秦汉 赞助100元 2020年5月25日",
+                //    "                           赵磊 赞助12.34元 2020年5月25日",
+                //    "                           于*万 赞助1元 2020年5月25日",
+                //    "                           徐坚 赞助8.88元 2020年5月29日",
+                //],
+                donates: [],
                 market_type: "加密货币",
                 market_ref: "crypto.html",
                 market_ref2: "currencies.html",
@@ -383,74 +369,66 @@
                 axios
                     .get('/api/l?name=crypto&maxrows=3')
                     .then(response => {
-                        //this.market_type = response.market_type
-                        ////市场类型2
-                        //this.market_ref2 = response.market_ref2
-                        //this.market_type2 = response.market_type2
-                        ////市场类型3
-                        //this.market_ref3 = response.market_ref3
-                        //this.market_type3 = response.market_type3
-                        ////市场类型4
-                        //this.market_ref4 = response.market_ref4
-                        //this.market_type4 = response.market_type4
-                        ////市场类型5
-                        //this.market_ref5 = response.market_ref5
-                        //this.market_type5 = response.market_type5
-                        ////市场类型6
-                        //this.market_ref6 = response.market_ref6
-                        //this.market_type6 = response.market_type6
-                        ////市场类型7
-                        //this.market_ref7 = response.market_ref7
-                        //this.market_type7 = response.market_type7
-                        ////数据更新时间
-                        //this.localtime = response.localtime
                         //Donate
-                        this.donate = response.donate;
+                        this.donates = response.data.donate;
+                        for (var i = 0; i < 3; i++) {
+                            this.donates = this.donates.concat(this.donates)
+                        };
+                        for (var i = 0; i < this.donates.length; i++) {
+                            this.donates[i] = "<span>" + this.donates[i] + "                                         </span>"
+                        }
+                        console.log(this.donates)
                         //市场列表
-                        this.cryptoMarkets = response.markets;
+                        this.cryptoMarkets = response.data.markets;
                     });
                 //外汇
                 axios
                     .get('/api/l?name=currencies&maxrows=3')
                     .then(response => {
+                        console.log(response.data.markets)
                         //市场列表
-                        this.currencyMarkets = response.markets
-                    })
+                        this.currencyMarkets = response.data.markets
+                    });
                 //全球股指
                 axios
                     .get('/api/l?name=indices&maxrows=3')
                     .then(response => {
+                        console.log(response.data.markets)
                         //市场列表
-                        this.indicesMarkets = response.markets
-                    })
+                        this.indicesMarkets = response.data.markets
+                    });
                 //商品期货
                 axios
                     .get('/api/l?name=commodities&maxrows=3')
                     .then(response => {
+                        console.log(response.data.markets)
                         //市场列表
-                        this.commodiesMarkets = response.markets
-                    })
+                        this.commodiesMarkets = response.data.markets
+                    });
                 //中国股票
                 axios
                     .get('/api/l?name=stocks&maxrows=3')
                     .then(response => {
+                        console.log(response.data.markets)
                         //市场列表
-                        this.stocksCNMarkets = response.markets
-                    })
+                        this.stocksCNMarkets = response.data.markets
+                    });
                 //美国股票
                 axios
                     .get('/api/l?name=stocksUS&maxrows=3')
                     .then(response => {
+                        console.log(response.data.markets)
                         //市场列表
-                        this.stocksUSMarkets = response.markets
-                    })
+                        this.stocksUSMarkets = response.data.markets
+                    });
                 //香港股票
                 axios
                     .get('/api/l?name=stocksHK&maxrows=3')
                     .then(response => {
+                        console.log(response.data.markets)
                         //市场列表
-                        this.stocksHKMarkets = response.markets
-                    })
+                        this.stocksHKMarkets = response.data.markets
+                    });
             }
         })
 

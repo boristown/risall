@@ -6,6 +6,14 @@ import math
 from tqdm import tqdm
 import donate
 
+def getdonatetext(donates):
+    donatetext = ""
+    for donateperson in donates:
+        if len(donatetext) > 0:
+            donatetext = donatetext + "                          "
+        donatetext = donatetext + donateperson
+    return donatetext
+
 def generate_html(title, html_name, market_type, 
                   market_ref2, market_type2,
                   market_ref3, market_type3,
@@ -114,10 +122,10 @@ if __name__ == "__main__":
                         lastitem = data_dict[currentdatestr]
                     currentdate += datetime.timedelta(days=1)
                 market_prediction = "今日操作：" + marketprices[0]["Prediction"] +  " 年化：" + str(round(annualised[market_id[0]] * 100, 2)) + "%"
-                generate_market_html(u"AI预测：" +market_id[1] +"--预测线forcastline.com", market_html_name, market_id[1],
-                      market_type[market_key], '../' + html_name[market_key], market_prediction,
-                      price_lists, donate.donate, data_dict,
-                      time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), marketprices)
+                #generate_market_html(u"AI预测：" +market_id[1] +"--预测线forcastline.com", market_html_name, market_id[1],
+                #      market_type[market_key], '../' + html_name[market_key], market_prediction,
+                #      price_lists, getdonatetext(donate.donate), data_dict,
+                #      time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), marketprices)
             
             for indexline in indexlist:
                 if True or indexline[1][0:3] == 'USD' or ',USD' in indexline[1]:
@@ -139,7 +147,7 @@ if __name__ == "__main__":
                     "Side":indexline[8],
                     "Score":round(indexline[9],2),
                     "Class":'rise' if '涨' in indexline[8] else 'fall',
-                    "Symbol":"market/"+indexline[10] + ".html",
+                    "Symbol":"market.html?id="+indexline[10],
                     "Annualised": annualised[indexline[10]]
                     }
                 body.append(result)
@@ -158,8 +166,8 @@ if __name__ == "__main__":
                           html_name[keys[3]], market_type[keys[3]],
                           html_name[keys[4]], market_type[keys[4]],
                           html_name[keys[5]], market_type[keys[5]],
-                          donate.donate,
-                          time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), 
+                          getdonatetext(donate.donate),
+                          time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                           body)
             print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),html_name[market_key],"已生成。")
             
