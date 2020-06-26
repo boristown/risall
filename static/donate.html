@@ -8,6 +8,7 @@
     <link rel="icon" href="Logo.ico" type="image/x-icon">
     <link rel="shortcut icon" href="Logo.ico" type="image/x-icon">
     <link rel="stylesheet" href="Index.css" type="text/css">
+    <script src='/js/common.js'></script>
     <script>
         var _hmt = _hmt || [];
         (function () {
@@ -19,6 +20,10 @@
     </script>
 </head>
 <body>
+    <div class="fullscreenanimation">
+        <canvas>
+        </canvas>
+    </div>
     <div class="virtual_body" align="center">
         <div>
             <div align="center">
@@ -42,5 +47,8 @@
             </div>
         </div>
     </div>
+    <script>
+        particleConnector();
+    </script>
 </body>
 </html>

@@ -25,8 +25,11 @@
             <h3 class="donate">{{donate}}</h3>
         </marquee>
     </div>
-    <div class="virtual_body" align="center">
-        <div>
+    <div class="fullscreenanimation">
+        <canvas>
+        </canvas>
+    </div>
+        <div align="center">
             <br>
             <h1>{{market_type}}</h1>
             <h2>
@@ -86,14 +89,14 @@
             <div id="footer">联系AI纪元-预测线：forcastline@163.com</div>
             <div id="footer">京ICP备20013339号</div>
         </div>
-    </div>
     <script type="text/javascript" src="js/jquery-latest.js"></script>
     <script>
-                //$("iframe[name=iframeContent]").on("load", function () {
-                //    var responseText = $("iframe")[0].contentDocument.body.getElementsByTagName("pre")[0].innerHTML;
-                //    alert(responseText);
-                //    //以下就可以判断并处理返回值
-                //})
+        setTimeout("particleConnector()", "2000");
+                    //$("iframe[name=iframeContent]").on("load", function () {
+                    //    var responseText = $("iframe")[0].contentDocument.body.getElementsByTagName("pre")[0].innerHTML;
+                    //    alert(responseText);
+                    //    //以下就可以判断并处理返回值
+                    //})
     </script>
 </body>
 </html>

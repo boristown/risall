@@ -1,7 +1,7 @@
 ﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # by vellhe 2017/7/9
-from flask import Flask, send_from_directory, render_template, request
+from flask import Flask, send_from_directory, render_template, request, redirect
 from jinja2 import Environment, FileSystemLoader 
 from flask_restful import reqparse, abort, Api, Resource
 import mysql.connector
@@ -325,6 +325,12 @@ def getmarket():
         }
     return resultdict
 
+@app.before_request
+def before_request():
+    if request.url.startswith('http://'):
+        url = request.url.replace('http://', 'https://', 1)
+        return redirect(url, code=301)
+
 @app.route('/api/l', methods=['post','get'])
 def getlist():
     listname = request.args.get("name")
@@ -399,7 +405,9 @@ def searchpage():
     wd = request.args.get('wd')
     marketlist, markets = getMarket(wd)
     if len(marketlist) == 1:
-        return app.send_static_file("market/" + markets[0] +".html")
+        #return app.send_static_file("market/" + markets[0] +".html")
+        return redirect("https://www.forcastline.com/market.html?id=" + markets[0], code=302)
+        #return app.send_static_file("market.html?id=" + markets[0])
     #marketlist = json.loads(marketJson)
     body = []
     for marketitem in marketlist:

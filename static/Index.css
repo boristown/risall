@@ -584,6 +584,7 @@ table.floatindextable tr:hover th {
 .animationdiv {
     height: 300px;
     width: 98vw;
+    /*border: 2px solid #F00;*/
     border: none;
     position: absolute;
     left: 1vw;
@@ -591,12 +592,19 @@ table.floatindextable tr:hover th {
     pointer-events: none;
 }
 
+/*悬浮动画画布*/
+#itemaninationcanvas {
+    height: 300px;
+    width: 98vw;
+}
+
 /*全屏动画*/
 .fullscreenanimation {
-    height: 100vh;
-    width: 100vw;
-    border: 2px solid pink;
+    height: 100%;
+    width: 100%;
+    border: none;
     position: absolute;
+    z-index: 1;
     left: 0vw;
     top: 0vh;
     pointer-events: none;
@@ -636,25 +644,25 @@ table.floatindextable tr:hover th {
     margin-right: 20px;
 }
 
-    .page-bar a:hover {
-        background-color: #505050;
-        color: #fff;
-    }
+.page-bar a:hover {
+    background-color: #505050;
+    color: #fff;
+}
 
 .page-bar a.banclick {
     cursor: not-allowed;
 }
 
-    .page-bar .active a {
-        color: #000;
-        cursor: default;
-        background-color: #8ca8ff;
-        border-color: #8ca8ff;
-    }
+.page-bar .active a {
+    color: #000;
+    cursor: default;
+    background-color: #8ca8ff;
+    border-color: #8ca8ff;
+}
 
-    .page-bar i {
-        font-style: normal;
-        color: #8ca8ff;
-        margin: 0px 4px;
-        font-size: 12px;
-    }
+.page-bar i {
+    font-style: normal;
+    color: #8ca8ff;
+    margin: 0px 4px;
+    font-size: 12px;
+}

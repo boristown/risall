@@ -16,11 +16,15 @@
     <div id="vue_app">
         <div class="fixed_div" id="appDonate">
             <!--<ul>
-                <li class="donateLi" v-for="donate in donates" v-html="donate" />
-            </ul>-->
+            <li class="donateLi" v-for="donate in donates" v-html="donate" />
+        </ul>-->
             <marquee scrollamount=10>
                 <h3 class="donate" v-for="donate in donates" v-html="donate"></h3>
             </marquee>
+        </div>
+        <div class="fullscreenanimation">
+            <canvas>
+            </canvas>
         </div>
         <div align="center">
             <table height="100%" width="100%" class="indextable">
@@ -430,7 +434,8 @@
                         this.stocksHKMarkets = response.data.markets
                     });
             }
-        })
+        });
+        particleConnector();
 
     </script>
 </body>
