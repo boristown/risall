@@ -89,9 +89,9 @@
                         <th>收益Profit</th>
                         <th>余额Balance</th>
                     </tr>
-                    <tr :class="item.Class" v-for="item in tableitems" 
-                        @mouseover="drawItemAnimation(item)" 
-                        @mouseout="clearItemAnimation(item)">
+                    <tr :class="item.Class" v-for="(item, itemindex) in tableitems" 
+                        @mouseover="drawItemAnimation(item, itemindex)" 
+                        @mouseout="clearItemAnimation(item, itemindex)">
                         <td>{{ item.Date }}</td>
                         <td>{{ item.Open }}</td>
                         <td>{{ item.High }}</td>
@@ -131,11 +131,14 @@
         //读取m(market)参数
         marketid = getQueryVariable("id")
 
-        let longwidth = 1000
-        let shortwidth = 500
-        let buyStyle = 'rgba(200, 70, 50, 1)'
-        let sellStyle = 'rgba(50, 200, 80, 1)'
-        let bartextStyle = "rgb(20,20,20, 1)";
+        let canvasH = 500;
+        let canvasW = 500;
+        let mouseDis = 50;
+        let longwidth = 1000;
+        let shortwidth = 500;
+        let buyStyle = 'rgba(200, 70, 50, 1)';
+        let sellStyle = 'rgba(50, 200, 80, 1)';
+        let bartextStyle = 'rgb(20, 20, 20, 1)';
 
         var vue_app = new Vue({
             el: '#vue_app',
@@ -213,11 +216,11 @@
                         })
                 },
                 //绘制动画（只有当鼠标指向的item改变时它才会动）
-                drawItemAnimation: function (item) {
-                    drawItemFrame(item);
+                drawItemAnimation: function (item, itemindex) {
+                    drawItemFrame(item, itemindex, this.tableitems);
                 },
                 //清空动画
-                clearItemAnimation: function (item) {
+                clearItemAnimation: function (item, itemindex) {
                     //let canvas = document.getElementById('itemaninationcanvas');
                     //let ctx = canvas.getContext('2d');
                     //ctx.clearRect(0, 0, canvas.width, canvas.height);  

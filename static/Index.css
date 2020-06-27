@@ -582,10 +582,10 @@ table.floatindextable tr:hover th {
 
 /*Ðü¸¡¶¯»­*/
 .animationdiv {
-    height: 300px;
-    width: 98vw;
-    /*border: 2px solid #F00;*/
-    border: none;
+    height: 500px;
+    width: 500px;
+    border: 2px solid #F00;
+    /*border: none;*/
     position: absolute;
     left: 1vw;
     top: 100px;
@@ -594,7 +594,7 @@ table.floatindextable tr:hover th {
 
 /*Ðü¸¡¶¯»­»­²¼*/
 #itemaninationcanvas {
-    height: 300px;
+    height: 400px;
     width: 98vw;
 }
 

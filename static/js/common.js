@@ -39,7 +39,8 @@ function initanimation() {
 	var flag = false;
 	//2.box绑定鼠标按下事件
 	//var delX = 50;
-	var delY = 50 + 300;
+    var delY = mouseDis + canvasH;
+    var delX = canvasW / 2.0;
 
 	//document.onmousedown = function () {
 	//	flag = true;
@@ -50,14 +51,14 @@ function initanimation() {
 
 	//3.整个文档绑定鼠标移动事件
 	document.onmousemove = function () {
-		//if (flag) {
-			//删除多余的距离 保持住按下的位置
-			//var x = event.clientX - delX;
-			//var y = event.clientY - delY;
-			var y = event.pageY - delY;
-			//animationdiv.style.left = x + 'px';
-			animationdiv.style.top = y + 'px';
-		//}
+		var x = event.pageX - delX;
+        var y = event.pageY - delY;
+        if (x < 0)
+            x = 0;
+        if (y < 0)
+            y = 0;
+		animationdiv.style.left = x + 'px';
+		animationdiv.style.top = y + 'px';
 	};
 
 	////4.给整个文档绑定了 鼠标抬起事件
@@ -131,7 +132,7 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
 
         //var data = {"2020-05-28": 30.5, "2020-05-29": 30.4, 5, 6, 8, 9, 3, 5, 2]
 
-        var data = data_tabs[tabindex - 1]
+    var data = data_tabs[tabindex - 1];
 
 
         //for (var d in data) {
@@ -651,7 +652,7 @@ function particleConnector() {
     });
 };
 
-function drawItemFrame(item) {
+function drawItemFrame(item, itemindex, tableitems) {
 
     let canvas = document.getElementById('itemaninationcanvas'); //画布
     let ctx = canvas.getContext('2d'); //绘画上下文
@@ -668,9 +669,44 @@ function drawItemFrame(item) {
     let profitamount = isBuy ? exitposition - entryposition : entryposition - exitposition; //盈利金额
 
     clientW = parseInt(document.body.clientWidth);
-    canvas.setAttribute("width", clientW)
-    canvas.setAttribute("height",300)
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.setAttribute("width", canvasW)
+    canvas.setAttribute("height", canvasH)
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height); //清空
+
+    if (exitdate == '-')
+        return;
+
+    let priceCurveList = []
+
+    let minPrice = Infinity;
+    let maxPrice = 0;
+    let countPrice = 0;
+
+    //整理市场价格曲线数据
+    for (let endindex = itemindex; endindex >= 0; endindex--) {
+        let dayItem = tableitems[endindex];
+        priceCurveList.append(dayItem);
+        countPrice++;
+        if (dayItem["Low"] < minPrice) {
+            minPrice = dayItem["Low"];
+        }
+        if (dayItem["High"] > maxPrice) {
+            maxPrice = dayItem["High"];
+        }
+    }
+
+    let rangePrice = maxPrice - minPrice;
+
+    //计算价格的Y坐标
+    function getPriceY(price) {
+        return canvasH 
+    }
+
+    //每天的宽度
+    dayW = clientW / (countPrice + 1);
+
+
     ctx.font = "16px serif";
     fontH = 20; //字体高度
     barH = 30; //横条高度
