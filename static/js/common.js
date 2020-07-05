@@ -53,10 +53,22 @@ function initanimation() {
 	document.onmousemove = function () {
 		var x = event.pageX - delX;
         var y = event.pageY - delY;
+        var clientY = event.clientY;
+        //显示在鼠标下方
+        if (clientY < document.body.clientHeight / 2) {
+            delY = - mouseDis;
+        }
+        //显示在鼠标上方
+        else {
+            delY = mouseDis + canvasH;
+        };
         if (x < 0)
             x = 0;
         if (y < 0)
             y = 0;
+        if (x > document.body.clientWidth - canvasW) {
+            x = document.body.clientWidth - canvasW;
+        };
 		animationdiv.style.left = x + 'px';
 		animationdiv.style.top = y + 'px';
 	};
@@ -83,7 +95,7 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
     //var width = 600, height = 300,
     var width = document.body.clientWidth;
     var height = 600;
-    var margin = { left: 100, top: 30, right: 100, bottom: 20 },
+    var margin = { left: 100, top: 30, right: 100, bottom: 50 },
         g_width = width - margin.left - margin.right,
         g_height = height - margin.top - margin.bottom;
     //g_height = g_width / 2.0;
@@ -174,27 +186,29 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
             //.domain([d3.min(data[1]), d3.max(data[1])])
             //.domain([d3.min(data), d3.max(data)])
             .domain(d3.extent(data, function (d) { return d.balance; }))
+        .range([g_height, 0]);
+
+    var scale_profit = d3.scaleLinear()
+            .domain([0,d3.max(data, function (d) { return d.profit; })])
             .range([g_height, 0]);
 
-        //画面积函数
-        var area_generator = d3.area()
-            .x(function (d, i) {
-                //return scale_x(i);
-                return scale_x(d.date);
-            })
-            .y0(g_height)
-            .y1(function (d) {
-                //return scale_y(d);
-                return scale_y(d.close);
-            })
-            .curve(d3.curveMonotoneX)
 
-        //画面积
-        g.append("path")
-            .attr("d", area_generator(data)) //d="M1,0L20,40.....  d-path data
-            .attr("class", "priceerea")
-        //.style("fill","#ff5017")
-
+        //画日收益函数data.Profit
+      
+        //画日收益
+        g.append("g")
+            .attr("class", "bars")
+            .selectAll(".bar")
+            .data(data).enter()
+            .append("rect")
+            .attr("class", "profitbar")
+            .attr("x", function (d) { return scale_x(d.date); })
+            .attr("width", g_width / data.length * 0.67)
+            .attr("y", function (d) { return scale_profit(d.profit) > g_height ? g_height : scale_profit(d.profit); })
+            .attr("height", function (d) {
+                return Math.abs(g_height - scale_profit(d.profit));
+            });
+       
 
         //画面积函数
         var balance_area_generator = d3.area()
@@ -215,6 +229,24 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
             .attr("class", "balanceerea")
         //.style("fill","#ff5017")
 
+        //画面积函数
+        var area_generator = d3.area()
+            .x(function (d, i) {
+                //return scale_x(i);
+                return scale_x(d.date);
+            })
+            .y0(g_height)
+            .y1(function (d) {
+                //return scale_y(d);
+                return scale_y(d.close);
+            })
+            .curve(d3.curveMonotoneX)
+
+        //画面积
+        g.append("path")
+            .attr("d", area_generator(data)) //d="M1,0L20,40.....  d-path data
+            .attr("class", "priceerea")
+        //.style("fill","#ff5017")
         //定义X轴
         var xAxis = d3.axisBottom(scale_x)
             //.tickFormat(d3.time.format("%Y-%m-%d"))
@@ -224,7 +256,7 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
         g.append("g")
             .call(d3.axisBottom(scale_x))
             .attr("transform", "translate(0," + g_height + ")")
-            .attr("fill", "#48D1CC")
+            .attr("fill", "transparent")
 
         //Y轴
         g.append("g")
@@ -241,7 +273,8 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
         g.append("text")
             .text("价格Price")
             .attr("transform", "rotate(-90)")
-            .attr("fill", "Turquoise")
+            .attr("class", "pricetext")
+            //.attr("fill", "Turquoise")
             .attr("dy", "1em")
             .attr("text-anchor", "end")
 
@@ -249,8 +282,9 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
         g.append("text")
             .text("余额Balance")
             .attr("transform", "translate(" + (g_width - 20) + ",0) rotate(-90)")
+            .attr("class", "balancetext")
             .attr("dy", "1em")
-            .attr("fill", "DeepPink")
+            //.attr("fill", "DeepPink")
             .attr("text-anchor", "end")
 
         tooltip = d3.select('#tooltip');
@@ -370,7 +404,7 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
                 .attr('y1', 0)
                 .attr('y2', g_height);
 
-            tooltip.html('<h3 id="tooltipdate" align="left" >日期Date:' + seldata.date + '</h3><h3 id="tooltipprice" align="left">价格Price:' + seldata.close + '</h3><h3 id="tooltipbalance" align="left">余额Balance:' + Math.round(seldata.balance * 100) / 100 + '</h3>')
+            tooltip.html('<div id="tooltipprofit">' + seldata.profit + '%</div><div style="z-index:101"><h3 id="tooltipdate" align="left" >日期Date:' + seldata.date + '</h3><h3 id="tooltipprice" align="left">价格Price:' + seldata.close + '</h3><h3 id="tooltipbalance" align="left">余额Balance:' + Math.round(seldata.balance * 100) / 100 + '</h3><div>')
                 .style('animation', 'fadein10 0.5s')
                 .style('opacity', 1)
                 //.style('left', d3.event.pageX + 20 + 'px')
@@ -652,6 +686,28 @@ function particleConnector() {
     });
 };
 
+//月份字典
+var monthDict = {
+    "01": 'Jan.',
+    "02": 'Feb.',
+    "03": 'Mar.',
+    "04": 'Apr.',
+    "05": 'May',
+    "06": 'June',
+    "07": 'July',
+    "08": 'Aug.',
+    "09": 'Sept.',
+    "10": 'Oct.',
+    "11": 'Nov.',
+    "12": 'Dec.',
+};
+
+function clearItemFrame(item, itemindex, tableitems) {
+    let canvas = document.getElementById('itemaninationcanvas'); //画布
+    let ctx = canvas.getContext('2d'); //绘画上下文
+    ctx.clearRect(0, 0, canvas.width, canvas.height); //清空
+}
+
 function drawItemFrame(item, itemindex, tableitems) {
 
     let canvas = document.getElementById('itemaninationcanvas'); //画布
@@ -677,63 +733,298 @@ function drawItemFrame(item, itemindex, tableitems) {
     if (exitdate == '-')
         return;
 
-    let priceCurveList = []
+    let priceCurveList = [];
 
     let minPrice = Infinity;
     let maxPrice = 0;
     let countPrice = 0;
+    let lastC = 0;
 
     //整理市场价格曲线数据
     for (let endindex = itemindex; endindex >= 0; endindex--) {
         let dayItem = tableitems[endindex];
-        priceCurveList.append(dayItem);
+        if (endindex == itemindex)
+            lastC = dayItem["Close"];
+        priceCurveList.push(dayItem);
         countPrice++;
+        //更新最低价
+        if (lastC < dayItem["Low"]) {
+            dayItem["Low"] = lastC;
+        };
+        //更新最高价
+        if (lastC > dayItem["High"]) {
+            dayItem["High"] = lastC;
+        };
+        //计算最低价
         if (dayItem["Low"] < minPrice) {
             minPrice = dayItem["Low"];
-        }
+        };
+        //计算最高价
         if (dayItem["High"] > maxPrice) {
             maxPrice = dayItem["High"];
-        }
-    }
+        };
+        if (dayItem["Date"] == exitdate)
+            break;
+        lastC = dayItem["Close"];
+    };
 
     let rangePrice = maxPrice - minPrice;
-
-    //计算价格的Y坐标
-    function getPriceY(price) {
-        return canvasH 
-    }
+    let priceScale = 1.0;
+    let scaledRangePrice = rangePrice;
+    //原创的价格拉伸算法
+    while (scaledRangePrice < 10 || scaledRangePrice > 99) {
+        if (scaledRangePrice < 10) {
+            priceScale *= 10.0;
+            scaledRangePrice *= 10.0;
+        }
+        else if(scaledRangePrice > 99){
+            priceScale /= 10.0;
+            scaledRangePrice /= 10.0;
+        };
+    };
+    let leftMargin = 30;
+    let rightMargin = 30;
 
     //每天的宽度
-    dayW = clientW / (countPrice + 1);
+    let dayW = (canvasW - leftMargin - rightMargin) / (countPrice == 1 ? 1 : ( countPrice - 1 ));
 
+    //图层	内容
+    //1	600px * 600px画布，背景纯黑（做空）或纯白（做多）。
+    //2	对于天数N，绘制N - 1条1px灰色竖线，将画面分割为N份，左侧预留30px空间，用于显示价格。
+    //3	将画布下方30px、上方30px高度覆盖为背景色。
+    //4	在图层2每根竖线的下方，图层3的位置上输出日、月或年，文字为背景反色。
+    //5	使用[日期，最高价]和[日期，最低价]序列绘制一条从皇家蓝到暗绿宝石的水平渐变通道，通道内部50 % 透明度。
+    //6	使用[日期，收盘价]序列绘制一条背景反色的折线，30 % 透明度。
+    //7	在入场[日期, 价格]的坐标上绘制一个浅灰（黑色背景时）或深灰（白色背景时）的10px直径实心圆A。
+    //8	在图层5实心圆左边的位置显示买入Buy或卖出Sell价XXX，使用背景色的反色，使用图层15的规则来显示价格。
+    //9	在离场日期, 价格]的坐标上绘制一个OrangeRed橙红色（亏损时）或LimeGreen闪光深绿（盈利时）的10px直径实心圆B。
+    //10 在图层7实心圆右边的位置显示卖出Sell或买入Buy价XXX，使用背景色的反色，使用图层15的规则来显示价格。
+    //11	找到图表中未绘制图形的且距离实心圆A最近的高度150 * 宽度300的矩形区域，设置为实心圆A的同色背景。
+    //12	找到图表中未绘制图形的且距离实心圆B最近的高度150 * 宽度300的矩形区域，设置为实心圆B的同色背景。
+    //13	在图层11上显示“AI预测XX评分XX触发做多 / 做空，ATR = XX %”，在图层12上显示“从价格XX下跌1倍ATR触发止损，盈利 / 亏损=XX %“，只显示2位有效数字。
+    //14	在图表上方，图层3的位置上显示：”海龟三号交易系统：头寸大小 = 余额 * 1 % /ATR，当移动亏损达到余额的1%时触发强制止损“，文字为背景反色。
+    //15	在图表左侧预留的区域显示价格，价格只显示发生变化的最高3位数。例如价格范围9702到10213显示为97到102; 价格范围0.00345到0.00356显示为45到56。
+    //16	在图表下方显示一条横线和N条短竖线作为日期坐标轴，使用浅灰（黑色背景时）或深灰（白色背景时）。
+    //17	在图表左方显示一条竖线和N条短横线作为价格坐标轴，使用浅灰（黑色背景时）或深灰（白色背景时）。
 
-    ctx.font = "16px serif";
-    fontH = 20; //字体高度
-    barH = 30; //横条高度
-    spanW = 5; //宽度间隔
-    spanH = 5; //高度间隔
-    spanL = (clientW - longwidth) / 2.0; //左间隔
-    ctx.fillStyle = isBuy ? buyStyle : sellStyle;
-    curY = spanH;
-    ctx.fillText(entrydate + " 入场Entry：" + item.Prediction, spanL, curY + fontH);
-    curY += fontH + spanH;
-    ctx.fillRect(spanL, curY, entryposition > exitposition ? longwidth : shortwidth, barH);
-    ctx.fillStyle = bartextStyle;
-    if (entryposition <= exitposition) {
-        ctx.fillText((!isBuy ? "亏损Loss: $" : "盈利Win: $") + profitamount, spanL + shortwidth + spanW, curY + fontH);
+    //图层1: 600px * 600px画布，背景纯黑（做空）或纯白（做多）。
+    let canvasBgColor = isBuy ? '#ffffff' : '#000000'
+    let canvasColor = isBuy ? '#000000' : '#ffffff'
+    let canvasMinorLineColor = '#808080';
+    let canvasColorGray = isBuy ? '#696969' : '#D3D3D3'
+    ctx.fillStyle = isBuy ? '#ffffff' : '#000000'
+    ctx.fillRect(0, 0, canvasW, canvasH);
+
+    //图层2: 对于天数N，绘制N-1条1px灰色竖线，将画面分割为N份，左侧预留30px空间，用于显示价格。
+    ctx.fillStyle = canvasMinorLineColor;
+
+    //计算X坐标
+    function getPositionX(dayindex) {
+        return leftMargin + dayW * dayindex;
     };
-    //ctx.fillText("数量Qty:" + entryquantity + " * 价格Price:$" + entryprice + " =  金额Amt:$" + entryposition, spanL, curY + fontH);
-    ctx.fillText((isBuy ? "支出Expenses " : "收入Income ") + "金额Amt:$" + entryposition, spanL, curY + fontH);
 
-    curY += barH + spanH
-    ctx.fillStyle = isBuy ? sellStyle : buyStyle;
-    ctx.fillText(exitdate + " 退出Exit：" + item.Prediction, spanL, curY + fontH);
-    curY += fontH + spanH;
-    ctx.fillRect(spanL, curY, entryposition > exitposition ? shortwidth : longwidth, barH);
-    ctx.fillStyle = bartextStyle;
-    if (entryposition > exitposition) {
-        ctx.fillText((isBuy ? "亏损Loss: $" : "盈利Win: $") + profitamount, spanL + shortwidth + spanW, curY + fontH);
+    for (let priceindex = 1; priceindex < countPrice; priceindex++) {
+        ctx.fillRect(getPositionX(priceindex), 0, 1, canvasH);
     };
-    //ctx.fillText("数量Qty:" + entryquantity + " * 价格Price:$" + exitprice + " =  金额Amt:$" + exitposition, spanL, curY + fontH);
-    ctx.fillText((isBuy ? "收入Income " : "支出Expenses ") + "金额Amt:$" + exitposition, spanL, curY + fontH);
+    let topMargin = 35;
+    let bottomMargin = 35;
+
+    ctx.fillStyle = canvasColorGray;
+    ctx.fillRect(getPositionX(0), 0, 1, canvasH);
+    ctx.fillRect(0, canvasH - bottomMargin, canvasW, 1);
+
+    //图层3: 将画布下方30px、上方30px高度覆盖为背景色。
+
+    ctx.fillStyle = canvasBgColor;
+    ctx.fillRect(0, 0, canvasW, topMargin);
+    ctx.fillRect(0, canvasH - bottomMargin - 1, canvasW, bottomMargin);
+
+    //图层4: 在图层2每根竖线的下方，图层3的位置上输出日、月或年，文字为背景反色。
+    ctx.fillStyle = canvasColor;
+    ctx.font = "12px serif";
+    let fontHeight = 13;
+    for (let priceindex = 0; priceindex < countPrice; priceindex++) {
+        let dateText = priceCurveList[priceindex]["Date"];
+        let dateElements = dateText.split("-");
+        if (dateElements.length != 3)
+            return;
+        let dateElementText = "";
+        if (dateElements[1] == '01' && dateElements[2] == '01') //显示为年
+            dateElementText = dateElements[0];
+        else if (dateElements[2] == '01') //显示为月
+            dateElementText = monthDict[dateElements[1]];
+        else //显示为日
+            dateElementText = dateElements[2];
+        ctx.fillText(dateElementText, getPositionX(priceindex) - (fontHeight * dateElementText.length) / 4, canvasH - bottomMargin + fontHeight);
+    };
+    
+
+    //计算Y坐标
+    function getPositionY(price) {
+        return topMargin + (canvasH - topMargin - bottomMargin) / rangePrice * (maxPrice - price);
+    };
+
+    //图层5: 使用[日期，最高价]和[日期，最低价]序列绘制一条从皇家蓝到暗绿宝石的水平渐变通道，通道内部50% 透明度。
+    let canvasGradientColorBegin = '#3AB8A0';
+    let canvasGradientColorCenter = '#2C92A1';
+    let canvasGradientColorEnd = '#1E6A9E';
+
+    ctx.beginPath();
+    ctx.globalAlpha = "0.5";
+    let grd = ctx.createLinearGradient(leftMargin, 0, canvasW - rightMargin, 0);
+    grd.addColorStop(0, canvasGradientColorBegin);
+    grd.addColorStop(0.5, canvasGradientColorCenter);
+    grd.addColorStop(1, canvasGradientColorEnd);
+    ctx.fillStyle = grd;
+    ctx.moveTo(getPositionX(0), getPositionY(priceCurveList[0]["Low"]));
+    let maxDistance = 0;
+    let currentLocationX = 0;
+    let currentLocationY = 0;
+    let textLocationX = 0;
+    let textLocationY = 0;
+    let currentDistance = 0;
+    for (let priceindex = 0; priceindex < countPrice; priceindex++) {
+        currentLocationX = getPositionX(priceindex);
+        currentLocationY = getPositionY(priceCurveList[priceindex]["High"]);
+        ctx.lineTo(currentLocationX, currentLocationY);
+        currentDistance = maxPrice - priceCurveList[priceindex]["High"];
+        if (currentDistance > maxDistance) {
+            maxDistance = currentDistance;
+            textLocationX = currentLocationX;
+            textLocationY = getPositionY(maxPrice);
+        };
+    };
+    for (let priceindex = countPrice - 1; priceindex >= 0; priceindex--) {
+        currentLocationX = getPositionX(priceindex);
+        currentLocationY = getPositionY(priceCurveList[priceindex]["Low"]);
+        ctx.lineTo(currentLocationX, currentLocationY);
+        currentDistance = priceCurveList[priceindex]["Low"] - minPrice;
+        if (currentDistance > maxDistance) {
+            maxDistance = currentDistance;
+            textLocationX = currentLocationX;
+            textLocationY = getPositionY(minPrice);
+        };
+    };
+    ctx.fill();
+
+    //图层6：使用[日期，收盘价]序列绘制一条背景反色的折线，30 % 透明度。
+    ctx.beginPath();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = canvasColor;
+    ctx.globalAlpha = "0.5";
+    ctx.moveTo(getPositionX(0), getPositionY(priceCurveList[0]["Close"]));
+    for (let priceindex = 0; priceindex < countPrice; priceindex++) {
+        ctx.lineTo(getPositionX(priceindex), getPositionY(priceCurveList[priceindex]["Close"]));
+    };
+    ctx.stroke();
+
+    ctx.globalAlpha = "1";
+    //图层7: 在入场[日期,价格]的坐标上绘制一个浅灰（黑色背景时）或深灰（白色背景时）的10px直径实心圆A。
+    let positionX = getPositionX(0);
+    let positionY = getPositionY(priceCurveList[0]["Close"]);
+
+    ctx.beginPath();
+    ctx.fillStyle = canvasColorGray;
+    ctx.arc(positionX, positionY, 5.0, 0, Math.PI * 2, false);
+    ctx.fill();
+
+    //图层8: 在图层5实心圆左边的位置显示买入Buy或卖出Sell价XXX，使用背景色的反色，使用图层15的规则来显示价格。
+    function priceFormart(price) {
+        return Math.round(price * priceScale);
+    };
+    ctx.fillStyle = canvasColor;
+    ctx.fillText(priceFormart(priceCurveList[0]["Close"]), 2, positionY + fontHeight / 2);
+
+    //图层9: 在离场日期, 价格]的坐标上绘制一个OrangeRed橙红色（亏损时）或LimeGreen闪光深绿（盈利时）的10px直径实心圆B。
+    positionX = getPositionX(countPrice-1);
+    positionY = getPositionY(priceCurveList[0]["StopPrice"]);
+
+    let cancasWinColor = profitamount < 0 ? '#f22e2e' : '#34d937';
+
+    ctx.beginPath();
+    ctx.fillStyle = cancasWinColor;
+    ctx.arc(positionX, positionY, 5.0, 0, Math.PI * 2, false);
+    ctx.fill();
+
+    //图层10: 在图层7实心圆右边的位置显示卖出Sell或买入Buy价XXX，使用背景色的反色，使用图层15的规则来显示价格。
+    ctx.fillStyle = canvasColor;
+    ctx.fillText(priceFormart(priceCurveList[0]["StopPrice"]), positionX + 7, positionY + fontHeight / 2);
+
+    //11	找到图表中未绘制图形的且距离实心圆A最近的高度150 * 宽度300的矩形区域，设置为实心圆A的同色背景。
+    //12	找到图表中未绘制图形的且距离实心圆B最近的高度150 * 宽度300的矩形区域，设置为实心圆B的同色背景。
+
+    ctx.globalAlpha = "0.5";
+    ctx.fillStyle = cancasWinColor;
+
+    textRectW = 300;
+    textRectH = 200;
+    textRectLeft = textLocationX - textRectW / 2.0;
+    textRectTop = textLocationY - textRectH / 2.0;
+    if (textRectLeft < 0) textRectLeft = 0;
+    if (textRectTop < 0) textRectTop = 0;
+    if (textRectLeft + textRectW > canvasW) textRectLeft = canvasW - textRectW;
+    if (textRectTop + textRectH > canvasH - bottomMargin) textRectTop = canvasH - bottomMargin - textRectH;
+
+    ctx.font = "80px serif";
+    fontHeight = 80;
+    //ctx.fillRect(textRectLeft, textRectTop, textRectW, textRectH);
+    ctx.fillText(item.Profit, textRectLeft, textRectTop + fontHeight + 50);
+    //13	在图层11上显示“AI预测XX评分XX触发做多 / 做空，ATR = XX %”，在图层12上显示“从价格XX下跌1倍ATR触发止损，盈利 / 亏损=XX %“，只显示2位有效数字。
+    let textLeft = 2;
+
+    ctx.font = "12px serif";
+    fontHeight = 13;
+    ctx.globalAlpha = "1";
+    ctx.fillStyle = canvasColor;
+    ctx.fillText("AI指令:" +item.Prediction + " ATR:" + item["ATR"].toString(), textRectLeft + textLeft, textRectTop + fontHeight, textRectW);
+    ctx.fillText("盈亏Profit: " + item.Profit, textRectLeft + textLeft, textRectTop + fontHeight * 2.5, textRectW);
+    ctx.fillText("入场Cost: " + priceFormart(item["Close"]) + " => 离场Stop: " + priceFormart(item["StopPrice"]) + " [x" + priceScale.toString() + "]", textRectLeft + textLeft, textRectTop + fontHeight * 4, textRectW);
+    ctx.fillText("海龟三号AI交易系统：", textRectLeft + textLeft, textRectTop + fontHeight * 5.5, textRectW);
+    ctx.fillText("Turtle No.3 AI Trading System:", textRectLeft + textLeft, textRectTop + fontHeight * 7, textRectW);
+    ctx.fillText("头寸大小 = 余额 * 1 % / ATR；", textRectLeft + textLeft, textRectTop + fontHeight * 8.5, textRectW);
+    ctx.fillText("Position = balance * 1% / ATR;", textRectLeft + textLeft, textRectTop + fontHeight * 10, textRectW);
+    ctx.fillText("当移动亏损达到余额的1%时触发强制止损。", textRectLeft + textLeft, textRectTop + fontHeight * 11.5, textRectW);
+    ctx.fillText("Moving stop is triggered when loss reaches 1%.", textRectLeft + textLeft, textRectTop + fontHeight *13, textRectW);
+    
+
+    //let lastX = 0;
+    //let lastH = canvasH;
+    //let lastL = canvasH;
+    //let lastC = canvasH;
+    //for (let priceindex = 0; priceindex < countPrice; priceindex++) {
+    //    currX = getPositionX(priceindex);
+    //    currH = getPositionY(priceCurveList[priceindex]["High"]);
+    //    currL = getPositionY(priceCurveList[priceindex]["Low"]);
+    //    currC = getPositionY(priceCurveList[priceindex]["Close"]);
+    //};
+
+    
+    //fontH = 20; //字体高度
+    //barH = 30; //横条高度
+    //spanW = 5; //宽度间隔
+    //spanH = 5; //高度间隔
+    //spanL = (clientW - longwidth) / 2.0; //左间隔
+    //ctx.fillStyle = isBuy ? buyStyle : sellStyle;
+    //curY = spanH;
+    //ctx.fillText(entrydate + " 入场Entry：" + item.Prediction, spanL, curY + fontH);
+    //curY += fontH + spanH;
+    //ctx.fillRect(spanL, curY, entryposition > exitposition ? longwidth : shortwidth, barH);
+    //ctx.fillStyle = bartextStyle;
+    //if (entryposition <= exitposition) {
+    //    ctx.fillText((!isBuy ? "亏损Loss: $" : "盈利Win: $") + profitamount, spanL + shortwidth + spanW, curY + fontH);
+    //};
+    ////ctx.fillText("数量Qty:" + entryquantity + " * 价格Price:$" + entryprice + " =  金额Amt:$" + entryposition, spanL, curY + fontH);
+    //ctx.fillText((isBuy ? "支出Expenses " : "收入Income ") + "金额Amt:$" + entryposition, spanL, curY + fontH);
+
+    //curY += barH + spanH;
+    //ctx.fillStyle = isBuy ? sellStyle : buyStyle;
+    //ctx.fillText(exitdate + " 退出Exit：" + item.Prediction, spanL, curY + fontH);
+    //curY += fontH + spanH;
+    //ctx.fillRect(spanL, curY, entryposition > exitposition ? shortwidth : longwidth, barH);
+    //ctx.fillStyle = bartextStyle;
+    //if (entryposition > exitposition) {
+    //    ctx.fillText((isBuy ? "亏损Loss: $" : "盈利Win: $") + profitamount, spanL + shortwidth + spanW, curY + fontH);
+    //};
+    ////ctx.fillText("数量Qty:" + entryquantity + " * 价格Price:$" + exitprice + " =  金额Amt:$" + exitposition, spanL, curY + fontH);
+    //ctx.fillText((isBuy ? "收入Income " : "支出Expenses ") + "金额Amt:$" + exitposition, spanL, curY + fontH);
 };

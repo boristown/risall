@@ -70,9 +70,9 @@
                     <th>年化收益Annualised</th>
                 </tr>
                 {% for item in body %}
-                <tr class={{ item.Class }}>
+                <tr class="{{ item.Class }}"  onclick="location.href='{{ item.Symbol }}'">
                     <td><center>{{ item.ItemNo }}</center></td>
-                    <td><a class={{ item.Class }} href='{{ item.Symbol }}'>{{ item.Market }}</a></td>
+                    <td>{{ item.Market }}</td>
                     <td>{{ item.Side }}</td>
                     <td>{{ item.Score }}</td>
                     <td>{{ item.Date }}</td>

@@ -45,6 +45,7 @@
     <Content Include="static\Index.css" />
     <Content Include="static\index.html" />
     <Content Include="static\indices.html" />
+    <Content Include="static\js\common.js" />
     <Content Include="static\js\d3.min.js" />
     <Content Include="static\js\jquery-latest.js" />
     <Content Include="static\Logo.ico" />

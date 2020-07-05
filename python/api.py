@@ -226,7 +226,7 @@ list_name={
 
 html_name = {
     "外汇":"currencies.html",
-    "加密货币":"index.html",
+    "加密货币":"crypto.html",
     "全球股指":"indices.html",
     "商品期货":"commodities.html",
     "股票":"stocks.html",
@@ -263,7 +263,7 @@ def getmarket():
     
     if len(marketprices) == 0:
         return {}
-    price_list = [{"date":marketprice["Date"],"close":marketprice["Close"], "balance":marketprice["Balance"]} for marketprice in marketprices][-1::-1]
+    price_list = [{"date":marketprice["Date"],"close":marketprice["Close"], "balance":marketprice["Balance"], "profit": float(marketprice["Profit"].strip('%'))} for marketprice in marketprices][-1::-1]
     
     price_lists = []
     #price_lists.append(price_list[-30:])

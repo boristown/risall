@@ -2,6 +2,7 @@ import mypsw
 import mysql.connector
 import math
 import datetime
+import time
 
 def init_mycursor():
     myconnector = mysql.connector.connect(
@@ -276,11 +277,15 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                         buyamount = quantity * oldorder["Close"]
                         sellamount = quantity * oldorder["StopPrice"]
                         Profit = sellamount - buyamount
+                        if Profit <= 0:
+                            oldorder["Class"] += " loss"
+                        else:
+                            oldorder["Class"] += " win"
                         #balance += Profit
                         if balance < 0:
                             balance = 0
                         else:
-                            oldorder["Profit"] = str(round(Profit / oldorder["Balance"] * 100, 3)) + '%' if oldorder["Balance"] > 0 else '0%'
+                            oldorder["Profit"] = str(round(Profit / oldorder["Balance"] * 100, 2)) + '%' if oldorder["Balance"] > 0 else '0%'
                         orderlist.remove(oldorder)
                         continue
                     else:
@@ -293,11 +298,15 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                         sellamount = quantity * oldorder["Close"]
                         buyamount = quantity * oldorder["StopPrice"]
                         Profit = sellamount - buyamount
+                        if Profit <= 0:
+                            oldorder["Class"] += " loss"
+                        else:
+                            oldorder["Class"] += " win"
                         #balance += Profit
                         if balance < 0:
                             balance = 0
                         else:
-                            oldorder["Profit"] = str(round(Profit / oldorder["Balance"] * 100, 3)) + '%' if oldorder["Balance"] > 0 else '0%'
+                            oldorder["Profit"] = str(round(Profit / oldorder["Balance"] * 100, 2)) + '%' if oldorder["Balance"] > 0 else '0%'
                         orderlist.remove(oldorder)
                         continue
                     else:

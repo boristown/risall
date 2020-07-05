@@ -150,6 +150,10 @@ if __name__ == "__main__":
                     "Symbol":"market.html?id="+indexline[10],
                     "Annualised": annualised[indexline[10]]
                     }
+                if annualised[indexline[10]] <= 0:
+                    result["Class"] += ' loss'
+                else:
+                    result["Class"] += ' win'
                 body.append(result)
             body.sort(reverse = True, key = lambda line:(line["Annualised"], line["Score"]))
             for bodyitem in body:

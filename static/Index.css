@@ -27,23 +27,23 @@ tr.head {
 }
 
 tr.rise {
-    background-color: #09B1EC;
-    color: #ffffff;
+    background-color: #dddddd;
+    color: #222222;
     padding: 5px;
 }
 
-tr.rise:hover {
-    background-color: #ef0464 !important;
+tr.win:hover {
+    background-color: #34d937;
 }
 
 tr.fall {
-    background-color: #ffffff;
-    color: #000000;
+    background-color: #222222;
+    color: #dddddd;
     padding: 5px;
 }
 
-tr.fall:hover {
-    background-color: #13d30b !important;
+tr.loss:hover {
+    background-color: #f22e2e;
 }
 
 h3.donate {
@@ -139,35 +139,90 @@ div.d3chart {
     fill: #fff;
 }
 
-#pricesvgchart .price {
+/*#pricesvgchart .price {
     fill: Turquoise;
 }
 
 #pricesvgchart .balance {
     fill: DeepPink;
-}
+}*/
 
 path.priceerea {
-    fill: Turquoise;
-    stroke: #ff5017;
-    stroke-width: 0;
-    fill-opacity:0.5
+    /*    fill: Turquoise;
+    stroke: #ff5017;*/
+    fill: rgba(255,255,255,0.1);
+    stroke: rgba(255,255,255,0.8);
+    /*    fill-opacity: 0.5*/
+}
+
+text.pricetext,
+#pricesvgchart .price
+{
+    /*    fill: Turquoise;
+    stroke: #ff5017;*/
+    fill: rgba(255,255,255,1.0);
+    color: rgba(255,255,255,0.8);
+    /*    fill-opacity: 0.5*/
+}
+
+path.priceerea,
+path.balanceerea {
+    stroke-width: 3;
 }
 
 path.balanceerea {
-    fill: DeepPink;
-    fill-opacity: 0.5;
+    /*    fill: DeepPink;*/
+    fill: rgba(132, 119, 226, 0.5);
+    stroke: rgba(132, 119, 226, 0.9);
+    /*    fill-opacity: 0.5;*/
 }
 
-g.price {
-    fill: Turquoise;
+text.balancetext,
+#pricesvgchart .balance,
+#simulationbalance {
+    fill: rgb(132, 119, 226);
+    color: rgb(132, 119, 226)
+}
+
+rect.profitbar,
+#tooltipprofit {
+    fill: rgba(25, 191, 214, 0.75);
+    color: rgba(25, 191, 214, 1.0);
+}
+
+#tooltipdate,
+#simulationdate {
+    color: snow;
+}
+
+
+#tooltipdate,
+#tooltipprice,
+#tooltipbalance {
+    color: snow;
+    margin-left: 2px;
+}
+
+/*悬浮背景*/
+#tooltipprofit {
+    position: absolute;
+    font-size: 115px;
+    z-index: 100;
+    opacity: 0.5
+}
+
+
+/*g.price {*/
+    /*    fill: Turquoise;*/
+    /*fill: rgba(255,255,255,0.8);
     fill-opacity: 1;
 }
 
-g.balance {
-    fill: DeepPink;
+g.balance {*/
+    /*    fill: DeepPink;*/
+    /*fill: rgba(52, 30, 214, 1);
     fill-opacity: 1;
-}
+}*/
 
 li {
     list-style-type: none;
@@ -181,7 +236,7 @@ li {
 .bar {
     border: 1px solid #0b3536;
     border-radius: 6px;
-    fill: #0098d8;
+    fill: rgba(0, 152, 216, 1.00);
 }
 
 #bar .barText {
@@ -233,12 +288,10 @@ li {
 }
 
 #simulationdate {
-    color:orange;
     opacity: 0;
 }
 
 #simulationbalance {
-    color:DeepPink;
     opacity: 0;
 }
 
@@ -248,7 +301,7 @@ li {
 
 #tooltipline1 {
     animation: fadein06 0.5s;
-    stroke: orange;
+    stroke: snow;
     opacity: 0.6;
     stroke-width: 5;
     display: block
@@ -256,7 +309,7 @@ li {
 
 #tooltipline2 {
     animation: fadein06 0.5s;
-    stroke: orange;
+    stroke: snow;
     opacity: 0.6;
     stroke-width: 5;
     display: block
@@ -264,7 +317,7 @@ li {
 
 #tooltipline3 {
     animation: fadein06 0.5s;
-    stroke: orange;
+    stroke: snow;
     opacity: 0.6;
     stroke-width: 5;
     display: block
@@ -272,7 +325,7 @@ li {
 
 #tooltipline4 {
     animation: fadein06 0.5s;
-    stroke: orange;
+    stroke: snow;
     opacity: 0.6;
     stroke-width: 5;
     display: block
@@ -280,7 +333,7 @@ li {
 
 #tooltipline5 {
     animation: fadein06 0.5s;
-    stroke: orange;
+    stroke: snow;
     opacity: 0.6;
     stroke-width: 5;
     display: block
@@ -338,28 +391,12 @@ li {
     }
 }
 
-#tooltipdate {
-    color: orange;
-    margin-left: 2px;
-}
-
-#tooltipprice {
-    color: Turquoise;
-    margin-left: 2px;
-}
-
-#tooltipbalance {
-    color: DeepPink;
-    margin-left: 2px;
-}
-
 .container-top ul li {
     float: left;
     width: 33%;
     height: 60px;
     line-height: 60px;
     text-align: center;
-    /*background-image: linear-gradient(to right,dimgray,gray);*/
 }
 
 .container-bottom ul {
@@ -377,13 +414,11 @@ li {
 }
 
 .select {
-    /*background-image: linear-gradient(to right,dimgray,gray);*/
     background-image: linear-gradient(to right,#000000,#000000);
     color: white;
 }
 
 .unselect {
-    /*background-image: linear-gradient(to right,dimgray,gray);*/
     background-image: linear-gradient(to right,#48D1CC,#48D1CC);
     color: DarkSlateBlue;
 }
@@ -490,9 +525,9 @@ table.floatindextable tr th {
     height: 3em;
 }
 
-table.floatindextable tr th:hover {
-    background-color: #0b92d3 !important;
-}
+    table.floatindextable tr th:hover {
+        background-color: #34d937 !important;
+    }
 
 /*首页的浮动信息框次行*/
 table.floatindextable tr + tr th {
@@ -582,10 +617,10 @@ table.floatindextable tr:hover th {
 
 /*悬浮动画*/
 .animationdiv {
-    height: 500px;
-    width: 500px;
-    border: 2px solid #F00;
-    /*border: none;*/
+    height: 600px;
+    width: 600px;
+    /*border: 2px solid #F00;*/
+    border: none;
     position: absolute;
     left: 1vw;
     top: 100px;
@@ -594,8 +629,8 @@ table.floatindextable tr:hover th {
 
 /*悬浮动画画布*/
 #itemaninationcanvas {
-    height: 400px;
-    width: 98vw;
+    height: 600px;
+    width: 600px;
 }
 
 /*全屏动画*/

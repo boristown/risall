@@ -131,9 +131,9 @@
         //读取m(market)参数
         marketid = getQueryVariable("id")
 
-        let canvasH = 500;
-        let canvasW = 500;
-        let mouseDis = 50;
+        let canvasH = 600; //画布高度
+        let canvasW = 600; //画布宽度
+        let mouseDis = 50; //鼠标距离
         let longwidth = 1000;
         let shortwidth = 500;
         let buyStyle = 'rgba(200, 70, 50, 1)';
@@ -221,6 +221,7 @@
                 },
                 //清空动画
                 clearItemAnimation: function (item, itemindex) {
+                    clearItemFrame(item, itemindex, this.tableitems);
                     //let canvas = document.getElementById('itemaninationcanvas');
                     //let ctx = canvas.getContext('2d');
                     //ctx.clearRect(0, 0, canvas.width, canvas.height);  
