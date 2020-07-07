@@ -252,7 +252,8 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
         High = list_result[2]
         Low = list_result[3]
         Close = list_result[4]
-        balance = list_result[9]
+        if list_result[9] > 0:
+            balance = list_result[9]
         if last_c == 0:
             last_c = Open #Open Price
         tr = max(High, last_c) / min(Low, last_c) - 1.0
@@ -342,10 +343,12 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
     
     for market_item in market_list:
         market_item["ATR"] = str(round(market_item["ATR"] * 100.0, 2)) + '%'
+        market_item["StopPrice"] = float(format(market_item["StopPrice"], '.5g'))
+
 
     daycount = market_list[0]["Days"]
     startdate = market_list[0]["Datetime"] + datetime.timedelta(days=-daycount)
-    
+    print("balance = " + str(balance) + ";daycount = " + str(daycount))
     return market_list , math.pow(balance, 365.0 / daycount) - 1 if daycount > 0 else 0.0, pagetotal, startdate.strftime('%Y-%m-%d')
 
 
@@ -454,6 +457,7 @@ def get_market_prices(market_id):
     update_val = []
     for market_item in market_list:
         market_item["ATR"] = str(round(market_item["ATR"] * 100.0, 2)) + '%'
+        market_item["StopPrice"] = float(format(market_item["StopPrice"], '.5g'))
 
     for market_item in market_list[0:2]:
         currentdays = datetime.datetime.strptime(market_item["Date"], '%Y-%m-%d')

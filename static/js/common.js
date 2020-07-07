@@ -95,7 +95,8 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
     //var width = 600, height = 300,
     var width = document.body.clientWidth;
     var height = 600;
-    var margin = { left: 100, top: 30, right: 100, bottom: 50 },
+    //var margin = { left: 100, top: 30, right: 100, bottom: 50 },
+    var margin = { left: 0, top: 30, right: 0, bottom: 50 },
         g_width = width - margin.left - margin.right,
         g_height = height - margin.top - margin.bottom;
     //g_height = g_width / 2.0;
@@ -144,14 +145,14 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
 
         //var data = {"2020-05-28": 30.5, "2020-05-29": 30.4, 5, 6, 8, 9, 3, 5, 2]
 
-    var data = data_tabs[tabindex - 1];
+        var data = data_tabs[tabindex - 1];
 
 
         //for (var d in data) {
         //    d.key = parseDate(d.key);
         //}
         data.forEach(function (d) {
-            d.date = parseDate(d.date);
+            d.date = (typeof (d.date) == 'string' ? parseDate(d.date) : d.date);
             d.close = +d.close;
             //d = parseDate(d)
         });
@@ -260,13 +261,15 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
 
         //Y轴
         g.append("g")
-            .call(d3.axisLeft(scale_y))
+            .call(d3.axisRight(scale_y))
+            .attr("stroke-width","1")
             .attr("class", "price")
 
         //Y轴
         g.append("g")
-            .call(d3.axisRight(scale_balance))
+            .call(d3.axisLeft(scale_balance))
             .attr("transform", "translate(" + g_width + ",0)")
+            .attr("stroke-width", "1")
             .attr("class", "balance")
 
         //y轴文字
@@ -479,7 +482,8 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
 
     function $(id) {
         return typeof id === "string" ? document.getElementById(id) : document;
-    }
+    };
+
 
     //window.onload = function () {
     //    //初始化计时器;
@@ -1027,4 +1031,53 @@ function drawItemFrame(item, itemindex, tableitems) {
     //};
     ////ctx.fillText("数量Qty:" + entryquantity + " * 价格Price:$" + exitprice + " =  金额Amt:$" + exitposition, spanL, curY + fontH);
     //ctx.fillText((isBuy ? "收入Income " : "支出Expenses ") + "金额Amt:$" + exitposition, spanL, curY + fontH);
+};
+
+
+function marketOrientationChange() {
+    //如果宽度>=高度，就显示电脑界面
+    if (window.innerWidth >= window.innerHeight) {
+        expandMarketTable();
+    }
+    //如果宽度<高度，就显示手机界面
+    else {
+        collapseMarketTable();
+    };
+    loadd3chart(g_data_tabs, g_data_dict, g_market_name, g_startdate);
+};
+
+//折叠TABLE
+function collapseMarketTable() {
+    var tab = document.getElementById("MarketTable");
+    var trs = tab.rows;
+    for (let i = 0, len = trs.length; i < len; i++) {
+        trs[i].cells[1].style.display = 'none';
+        trs[i].cells[2].style.display = 'none';
+        trs[i].cells[3].style.display = 'none';
+        trs[i].cells[4].style.display = 'none';
+        trs[i].cells[5].style.display = 'none';
+        trs[i].cells[6].style.display = 'none';
+        trs[i].cells[7].style.display = 'none';
+        trs[i].cells[8].style.display = 'none';
+        trs[i].cells[9].style.display = 'none';
+        trs[i].cells[10].style.display = 'none';
+    }
+};
+
+//展开TABLE
+function expandMarketTable() {
+    var tab = document.getElementById("MarketTable");
+    var trs = tab.rows;
+    for (let i = 0, len = trs.length; i < len; i++) {
+        trs[i].cells[1].style.display = '';
+        trs[i].cells[2].style.display = '';
+        trs[i].cells[3].style.display = '';
+        trs[i].cells[4].style.display = '';
+        trs[i].cells[5].style.display = '';
+        trs[i].cells[6].style.display = '';
+        trs[i].cells[7].style.display = '';
+        trs[i].cells[8].style.display = '';
+        trs[i].cells[9].style.display = '';
+        trs[i].cells[10].style.display = '';
+    }
 };

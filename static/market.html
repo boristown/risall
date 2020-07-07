@@ -3,6 +3,7 @@
 <html lang="zh" xmlns="https://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>预测线-Forcastline</title>
     <script src="js/vue.js"></script>
     <script src="js/axios.min.js"></script>
@@ -73,7 +74,7 @@
             <div align="center">
                 <h4 style="text-align:center">市场评分由<a href="https://mp.weixin.qq.com/s/DWcvnNTaQ5IWIYN_CeQ8rA">海龟三号AI</a>评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
                 <h4 style="text-align:center"><a href="https://mp.weixin.qq.com/s/giZkEI_T7jY4nA8ABqf8XA">AI预测接口文档AI Prediction API Document</a></h4>
-                <table border="0">
+                <table border="0" width="100%" id="MarketTable">
                     <tr class="head">
                         <th>日期Date</th>
                         <th>开盘价Open</th>
@@ -130,6 +131,13 @@
     <script>
         //读取m(market)参数
         marketid = getQueryVariable("id")
+        var g_market_name = "";
+        var g_startdate = null;
+        var g_data_tabs = null;
+        var g_data_dict = null;
+
+        window.onorientationchange = marketOrientationChange;
+        window.onresize = marketOrientationChange;
 
         let canvasH = 600; //画布高度
         let canvasW = 600; //画布宽度
@@ -187,7 +195,7 @@
                             //Data Tabs
                             this.market_type_ref = response.data.market_type_ref;
                             //Market Name
-                            this.market_name = response.data.market_name;
+                            g_market_name = this.market_name = response.data.market_name;
                             //Market Prediction
                             this.market_prediction = response.data.market_prediction;
                             //localtime
@@ -197,13 +205,13 @@
                             //Page Total
                             this.pagetotal = response.data.pagetotal;
                             //start date
-                            this.startdate = response.data.startdate;
+                            g_startdate = this.startdate = response.data.startdate;
                             //Data tabs
-                            var data_tabs = response.data.price_list;
+                            g_data_tabs = response.data.price_list;
                             //Data Dict
-                            var data_dict = response.data.data_dict;
-                            //Load D3 Chart
-                            loadd3chart(data_tabs, data_dict, this.market_name, this.startdate);
+                            g_data_dict = response.data.data_dict;
+
+                            marketOrientationChange();
                             initanimation();
                             setTimeout("particleConnector()", "2000");
                             ////Make donate bar

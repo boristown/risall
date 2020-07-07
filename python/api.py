@@ -28,7 +28,6 @@ TODOS = {
 #context.use_privatekey_file('www-forcastline-com-iis-0614213034.pfx')
 #context.use_certificate_file('www-forcastline-com-iis-0614213034.pfx')
 
-
 def abort_if_todo_doesnt_exist(todo_id):
     if todo_id not in TODOS:
         abort(404, message="Todo {} doesn't exist".format(todo_id))
@@ -71,13 +70,11 @@ class TodoList(Resource):
         return TODOS[todo_id], 201
 
 def init_mycursor():
-    myconnection = mysql.connector.connect(
-      host=mypsw.host,
+    myconnection = mysql.connector.connect(host=mypsw.host,
       user=mypsw.user,
       passwd=mypsw.passwd,
       database=mypsw.database,
-      auth_plugin='mysql_native_password'
-      )
+      auth_plugin='mysql_native_password')
     mycursor = myconnection.cursor()
     return myconnection, mycursor
 
@@ -94,7 +91,7 @@ def get_subtags(tagname, mycursor):
 def get_markets_from_endtags(endtags, mycursor):
     markets = []
     select_tags_statment = 'select symbol_alias.symbol, group_concat(symbol_alias.symbol_alias) ' \
-    'from tags inner join symbol_alias on tags.symbol = symbol_alias.symbol where tags.tag in (%s) group by symbol_alias.symbol ' % ','.join(['%s']*len(endtags))
+    'from tags inner join symbol_alias on tags.symbol = symbol_alias.symbol where tags.tag in (%s) group by symbol_alias.symbol ' % ','.join(['%s'] * len(endtags))
     print(select_tags_statment)
     mycursor.execute(select_tags_statment, endtags)
     tags_results = mycursor.fetchall()
@@ -204,17 +201,15 @@ def generate_search_html(title,
     #env = Environment(loader=FileSystemLoader('./'))
     env = Environment(loader=FileSystemLoader('../static/template/'))
     template = env.get_template('searchTemplate.html')
-    #with open('../static/' + html_name,'w+',encoding='utf-8') as fout:   
-    html_content = template.render(
-                                    title = title, 
+    #with open('../static/' + html_name,'w+',encoding='utf-8') as fout:
+    html_content = template.render(title = title, 
                                     market_wd = wd,
                                     donate = donate,
                                     localtime=localtime , 
                                     body=body)
     return html_content
     #fout.write(html_content)
-
-list_name={
+list_name = {
     "currencies":"外汇",
     "crypto":"加密货币",
     "indices":"全球股指",
@@ -303,10 +298,10 @@ def getmarket():
     localtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
     #title
-    title = u"AI预测：" + market_name +"--预测线forcastline.com"
+    title = u"AI预测：" + market_name + "--预测线forcastline.com"
 
     #market prediction
-    market_prediction = "今日操作：" + marketprices[0]["Prediction"] +  " 年化：" + str(round(annualised * 100, 2)) + "%"
+    market_prediction = "今日操作：" + marketprices[0]["Prediction"] + " 年化：" + str(round(annualised * 100, 2)) + "%"
 
     #Result dict
     resultdict = {
@@ -352,11 +347,12 @@ def getlist():
         volume = indexline[7]
         #balance = indexline[12]
         #daycount = indexline[13]
-        #annualised = math.pow(balance, 365.0 / daycount) - 1 if daycount > 0 else 0.0
+        #annualised = math.pow(balance, 365.0 / daycount) - 1 if daycount > 0
+        #else 0.0
         annualised = indexline[12]
         result = {
             'ItemNo':indexline[0], 
-            'Market':'<span><p>'+indexline[1].replace(',','</p><p>')+'</p></span>',
+            'Market':'<span><p>' + indexline[1].replace(',','</p><p>') + '</p></span>',
             'Date': indexline[2], 
             'Open':indexline[3],
             "High":indexline[4],
@@ -364,24 +360,25 @@ def getlist():
             "Close":indexline[6],
             "Volume":volume,
             "Rise":str(round((indexline[6] / indexline[3] - 1) * 100, 2)) + "%",
-            "Side": '<span><p>'+indexline[8]+'</p></span>',
+            "Side": '<span><p>' + indexline[8] + '</p></span>',
             "Score":round(indexline[9],2),
             "Class":'rise' if '涨' in indexline[8] else 'fall',
-            "Symbol":"market.html?symbol="+indexline[10],
+            "Symbol":"market.html?symbol=" + indexline[10],
             "Annualised": annualised,
             "BgColor": indexline[13],
             "Color": indexline[14]
             }
         body.append(result)
-    #body.sort(reverse = True, key = lambda line:(line["Annualised"], line["Score"]))
+    #body.sort(reverse = True, key = lambda line:(line["Annualised"],
+    #line["Score"]))
     for bodyitem in body:
-        bodyitem["Annualised"] = "<span><p>"+ str(round(bodyitem["Annualised"] * 100, 2)) + "%</p></span>"
+        bodyitem["Annualised"] = "<span><p>" + str(round(bodyitem["Annualised"] * 100, 2)) + "%</p></span>"
     itemNo = 0
     for indexline in body:
         itemNo += 1
         indexline["ItemNo"] = itemNo
     return {
-        "title": u"AI预测：" + market_type[market_key] +"--预测线forcastline.com",
+        "title": u"AI预测：" + market_type[market_key] + "--预测线forcastline.com",
         "market_type": market_type[market_key],
         "market_ref2": html_name[keys[0]],
         "market_type2": market_type[keys[0]],
@@ -420,7 +417,7 @@ def searchpage():
             volume = indexline[7] * indexline[6]
         result = {
             'ItemNo':indexline[0], 
-            'Market':'<span><p>'+indexline[1].replace(',','</p><p>')+'</p></span>',
+            'Market':'<span><p>' + indexline[1].replace(',','</p><p>') + '</p></span>',
             'Date': indexline[2], 
             'Open':indexline[3],
             "High":indexline[4],
@@ -431,7 +428,7 @@ def searchpage():
             "Side":indexline[8],
             "Score":round(indexline[9],2),
             "Class":'rise' if '涨' in indexline[8] else 'fall',
-            "Symbol":"market/"+indexline[10] + ".html"
+            "Symbol":"market/" + indexline[10] + ".html"
             }
         body.append(result)
     body.sort(reverse = True, key = lambda line:(line["Score"]))
@@ -439,7 +436,7 @@ def searchpage():
     for indexline in body:
         itemNo += 1
         indexline["ItemNo"] = itemNo
-    renderedhtml = generate_search_html(u"AI预测：" + wd +"--预测线forcastline.com", 
+    renderedhtml = generate_search_html(u"AI预测：" + wd + "--预测线forcastline.com", 
                     wd,
                     donate.donate,
                     time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), 
@@ -454,10 +451,16 @@ def searchpage():
 #def market(id):
 #    return app.send_static_file("market/"+id+".html")
 
+@app.errorhandler(404)
+def page_not_found(error):
+    #return render_template("404.html"), 404
+    return app.send_static_file("vue/index.html"), 404
+
 if __name__ == '__main__':
     #app.run(host="0.0.0.0", ssl_context='adhoc')
     #passwd = ''
-    #p12 = load_pkcs12(open('ssl/www-forcastline-com-iis-0614213034.pfx', 'rb').read(), passwd)
+    #p12 = load_pkcs12(open('ssl/www-forcastline-com-iis-0614213034.pfx',
+    #'rb').read(), passwd)
     #pkey = p12.get_privatekey()
     #open('ssl/pkey.pem', 'wb').write(dump_privatekey(FILETYPE_PEM, pkey))
     #cert = p12.get_certificate()
