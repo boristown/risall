@@ -402,8 +402,8 @@ def searchpage():
     wd = request.args.get('wd')
     marketlist, markets = getMarket(wd)
     if len(marketlist) == 1:
-        #return app.send_static_file("market/" + markets[0] +".html")
-        return redirect("https://www.forcastline.com/market.html?id=" + markets[0], code=302)
+        return app.send_static_file("market/" + markets[0] +".html")
+        #return redirect("https://www.forcastline.com/market.html?id=" + markets[0], code=302)
         #return app.send_static_file("market.html?id=" + markets[0])
     #marketlist = json.loads(marketJson)
     body = []

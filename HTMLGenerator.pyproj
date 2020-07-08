@@ -54,7 +54,7 @@
     <Content Include="static\stocks.html" />
     <Content Include="static\stocksHK.html" />
     <Content Include="static\stocksUS.html" />
-    <Content Include="static\market.html" />
+    <Content Include="static\template\market.html" />
     <Content Include="static\template\searchTemplate.html" />
     <Content Include="static\template\template.html" />
     <Content Include="static\vue\index.html" />

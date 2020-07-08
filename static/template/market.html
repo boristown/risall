@@ -4,13 +4,14 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>预测线-Forcastline</title>
-    <script src="js/vue.js"></script>
-    <script src="js/axios.min.js"></script>
-    <link rel="icon" href="Logo.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="Logo.ico" type="image/x-icon">
+    <!--<title>预测线-Forcastline</title>-->
+    <title>{{title}}</title>
+    <script src="../js/vue.js"></script>
+    <script src="../js/axios.min.js"></script>
+    <link rel="icon" href="../Logo.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../Logo.ico" type="image/x-icon">
     <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="Index.css" type="text/css">
+    <link rel="stylesheet" href="../Index.css" type="text/css">
     <script>
         var _hmt = _hmt || [];
         (function () {
@@ -47,11 +48,11 @@
             </div>
             <br>
             <h2 class="hidewhensimulation">
-                <a :href="market_type_ref">{[market_type]}</a>
+                <a href="{{market_type_ref}}">{{market_type}}</a>
             </h2>
-            <h1 class="hidewhensimulation">{[market_name]}</h1>
-            <h2 class="hidewhensimulation">{[market_prediction]}</h2>
-            <h3 class="hidewhensimulation">更新时间Updated Time: {[localtime]}（每60分钟更新一次Updated every 60 minutes）</h3>
+            <h1 class="hidewhensimulation">{{market_name}}</h1>
+            <h2 class="hidewhensimulation">{{market_prediction}}</h2>
+            <h3 class="hidewhensimulation">更新时间Updated Time: {{localtime}}（每60分钟更新一次Updated every 60 minutes）</h3>
 
             <div class="search bar7">
                 <form action="/s" method="get">
@@ -126,11 +127,12 @@
             </div>
         </div>
     </div>
-    <script src="js/d3.min.js" charset="utf-8"></script>
+    <script src="../js/d3.min.js" charset="utf-8"></script>
     <script src='../js/common.js' charset="utf-8"></script>
     <script>
         //读取m(market)参数
-        marketid = getQueryVariable("id")
+        //marketid = getQueryVariable("id")
+        marketid = "{{ market_id }}"
         var g_market_name = "";
         var g_startdate = null;
         var g_data_tabs = null;
