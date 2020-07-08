@@ -39,7 +39,7 @@
         </div>
         <div>
             <div id="simulationstate" style="position:absolute;padding:5px; z-index:-1">
-                <h2 id="simulationsymbol">{{market_type}}</h2>
+                <h2 id="simulationsymbol">{[market_type]}</h2>
                 <h3 id="simulationtitle">AI模拟交易Simulated Trading</h3>
                 <h3 id="simulationday">第1天Day 1</h3>
                 <h3 id="simulationdate">2020-1-1</h3>
@@ -47,11 +47,11 @@
             </div>
             <br>
             <h2 class="hidewhensimulation">
-                <a :href="market_type_ref">{{market_type}}</a>
+                <a :href="market_type_ref">{[market_type]}</a>
             </h2>
-            <h1 class="hidewhensimulation">{{market_name}}</h1>
-            <h2 class="hidewhensimulation">{{market_prediction}}</h2>
-            <h3 class="hidewhensimulation">更新时间Updated Time: {{localtime}}（每60分钟更新一次Updated every 60 minutes）</h3>
+            <h1 class="hidewhensimulation">{[market_name]}</h1>
+            <h2 class="hidewhensimulation">{[market_prediction]}</h2>
+            <h3 class="hidewhensimulation">更新时间Updated Time: {[localtime]}（每60分钟更新一次Updated every 60 minutes）</h3>
 
             <div class="search bar7">
                 <form action="/s" method="get">
@@ -93,19 +93,19 @@
                     <tr :class="item.Class" v-for="(item, itemindex) in tableitems" 
                         @mouseover="drawItemAnimation(item, itemindex)" 
                         @mouseout="clearItemAnimation(item, itemindex)">
-                        <td>{{ item.Date }}</td>
-                        <td>{{ item.Open }}</td>
-                        <td>{{ item.High }}</td>
-                        <td>{{ item.Low }}</td>
-                        <td><b>{{ item.Close }}</b></td>
-                        <td>{{ item.Today }}</td>
-                        <td>{{ item.Prediction }}</td>
-                        <td>{{ item.Score }}</td>
-                        <td>{{ item.ATR }}</td>
-                        <td>{{ item.StopPrice }}</td>
-                        <td>{{ item.StopDate }}</td>
-                        <td>{{ item.Profit }}</td>
-                        <td>{{ item.Balance }}</td>
+                        <td>{[ item.Date ]}</td>
+                        <td>{[ item.Open ]}</td>
+                        <td>{[ item.High ]}</td>
+                        <td>{[ item.Low ]}</td>
+                        <td><b>{[ item.Close ]}</b></td>
+                        <td>{[ item.Today ]}</td>
+                        <td>{[ item.Prediction ]}</td>
+                        <td>{[ item.Score ]}</td>
+                        <td>{[ item.ATR ]}</td>
+                        <td>{[ item.StopPrice ]}</td>
+                        <td>{[ item.StopDate ]}</td>
+                        <td>{[ item.Profit ]}</td>
+                        <td>{[ item.Balance ]}</td>
                     </tr>
                 </table>
                 <div class="page-bar">
@@ -113,11 +113,11 @@
                         <li v-if="pageindex>1"><a v-on:click="pageindex--,pageClick()">上一页</a></li>
                         <li v-if="pageindex==1"><a class="banclick">上一页</a></li>
                         <li v-for="index in pageindexlist" v-bind:class="{ 'active' : pageindex == index}">
-                            <a v-on:click="btnClick(index)">{{ index }}</a>
+                            <a v-on:click="btnClick(index)">{[ index ]}</a>
                         </li>
                         <li v-if="pageindex!=pagetotal"><a v-on:click="pageindex++,pageClick()">下一页</a></li>
                         <li v-if="pageindex==pagetotal"><a class="banclick">下一页</a></li>
-                        <li><a>共<i>{{pagetotal}}</i>页</a></li>
+                        <li><a>共<i>{[pagetotal]}</i>页</a></li>
                     </ul>
                 </div>
                 <br>
@@ -150,6 +150,7 @@
 
         var vue_app = new Vue({
             el: '#vue_app',
+            delimiters: ['{[', ']}'],
             data: {
                 donatehtml: null,
                 market_type: null,
