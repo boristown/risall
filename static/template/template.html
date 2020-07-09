@@ -26,10 +26,6 @@
             <h3 class="donate">{{donate}}</h3>
         </marquee>
     </div>
-    <div class="fullscreenanimation">
-        <canvas>
-        </canvas>
-    </div>
     <div align="center">
         <br>
         <h1>{{market_type}}</h1>
@@ -44,39 +40,41 @@
         <h3>更新时间Updated Time: {{localtime}}（每60分钟更新一次Updated every 60 minutes）</h3>
         <!--<iframe src="" frameborder="0" name="iframeContent" style="display: none;"></iframe>-->
         <!--<form action="/s" method="get" target="iframeContent">-->
-        <img src="logo.bmp" alt="预测线Forcastline" height="100" width="100">
-        <div class="search bar7">
-            <form action="/s" method="get">
-                <!--<label for="search">查找市场</label>-->
-                <input type="search" name="wd" id="search" placeholder="请输入市场名，例如：上证指数、黄金">
-                <button type="submit"></button>
-            </form>
-        </div>
-        <h2><a href="donate.html">点击赞助AI纪元-预测线网站，您的名字将显示为弹幕。</a></h2>
-        <h4 style="text-align:center">市场评分由<a href="https://mp.weixin.qq.com/s/DWcvnNTaQ5IWIYN_CeQ8rA">海龟三号AI</a>评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
-        <h4 style="text-align:center"><a href="https://mp.weixin.qq.com/s/giZkEI_T7jY4nA8ABqf8XA">AI预测接口文档AI Prediction API Document</a></h4>
-        <table border="0" width="100%">
-            <tr class="head">
-                <th>市场Market</th>
-                <th>预测Prediction</th>
-                <th>评分Score</th>
-                <th>年化收益Annualised</th>
-            </tr>
-            {% for item in body %}
-            <tr class="{{ item.Class }}" onclick="location.href='{{ item.Symbol }}'">
-                <td>{{ item.Market }}</td>
-                <td>{{ item.Side }}</td>
-                <td>{{ item.Score }}</td>
-                <th>{{ item.Annualised }}</th>
-            </tr>
-            {% endfor%}
-        </table>
-        <div id="footer">联系AI纪元-预测线：forcastline@163.com</div>
-        <div id="footer">京ICP备20013339号</div>
-    </div>
+        <a href="vue/index.htm">
+            <img src="logo.bmp" alt="预测线Forcastline" height="150px" width="150px">
+        </a>
+            <div class="search bar7">
+                <form action="/s" method="get">
+                    <!--<label for="search">查找市场</label>-->
+                    <input type="search" name="wd" id="search" placeholder="请输入市场名，例如：上证指数、黄金">
+                    <button type="submit"></button>
+                </form>
+            </div>
+            <h4><a href="donate.html">点击赞助AI纪元-预测线网站，您的名字将显示为弹幕。</a></h4>
+            <h4 style="text-align:center">市场评分由<a href="https://mp.weixin.qq.com/s/DWcvnNTaQ5IWIYN_CeQ8rA">海龟三号AI</a>评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
+            <h4 style="text-align:center"><a href="https://mp.weixin.qq.com/s/giZkEI_T7jY4nA8ABqf8XA">AI预测接口文档AI Prediction API Document</a></h4>
+            <table border="0" width="100%">
+                <tr class="head">
+                    <th>市场Market</th>
+                    <th>预测Prediction</th>
+                    <th>评分Score</th>
+                    <th>年化收益Annualised</th>
+                </tr>
+                {% for item in body %}
+                <tr class="{{ item.Class }}" onclick="location.href='{{ item.Symbol }}'">
+                    <td>{{ item.Market }}</td>
+                    <td>{{ item.Side }}</td>
+                    <td>{{ item.Score }}</td>
+                    <td>{{ item.Annualised }}</td>
+                </tr>
+                {% endfor%}
+            </table>
+            <div id="footer">联系AI纪元-预测线：forcastline@163.com</div>
+            <div id="footer"><a href="http://www.beian.miit.gov.cn/">京ICP备20013339号</a></div>
+</div>
     <script type="text/javascript" src="js/jquery-latest.js"></script>
     <script>
-        setTimeout("particleConnector()", "2000");
+        //setTimeout("particleConnector()", "2000");
                     //$("iframe[name=iframeContent]").on("load", function () {
                     //    var responseText = $("iframe")[0].contentDocument.body.getElementsByTagName("pre")[0].innerHTML;
                     //    alert(responseText);

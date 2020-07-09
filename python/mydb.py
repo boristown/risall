@@ -143,7 +143,7 @@ def get_search_list(markets):
     index_list = []
     myconnector, mycursor = init_mycursor()
     list_statement = '''
-    SELECT b.symbol_alias, DATE_FORMAT(a.date, "%%Y-%%m-%%d") as date, a.o, a.h, a.l, a.c, a.v as volume, if(a.f>=0.5,"即将上涨↑","即将下跌↓") as side, abs((a.f*2-1)*100) as score , b.symbol
+    SELECT b.symbol_alias, DATE_FORMAT(a.date, "%%Y-%%m-%%d") as date, a.o, a.h, a.l, a.c, a.v as volume, if(a.f>=0.5,"即将上涨↑","即将下跌↓") as side, abs((a.f*2-1)*100) as score , b.symbol, balance, days, a.date as datetime
     FROM zeroai.pricehistory as a inner join 
     (select symbol,group_concat(symbol_alias) as symbol_alias, market_type from zeroai.symbol_alias group by symbol, market_type) as b on a.symbol = b.symbol
     inner join zeroai.predictlog as c on a.symbol = c.symbol and a.date = c.MAXDATE
@@ -157,6 +157,10 @@ def get_search_list(markets):
     lineno = 0
     for list_result in list_results:
         lineno += 1
+        balance = list_result[10]
+        daycount = list_result[11]
+        startdate = list_result[12] + datetime.timedelta(days=-daycount)
+        #print("balance = " + str(balance) + ";daycount = " + str(daycount))
         index_list.append([
             lineno,
             list_result[0],
@@ -169,6 +173,7 @@ def get_search_list(markets):
             list_result[7],
             list_result[8],
             list_result[9],
+            math.pow(balance, 365.0 / daycount) - 1 if daycount > 0 else 0.0
             #list_result[10],
             ])
     return index_list
@@ -348,7 +353,7 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
 
     daycount = market_list[0]["Days"]
     startdate = market_list[0]["Datetime"] + datetime.timedelta(days=-daycount)
-    print("balance = " + str(balance) + ";daycount = " + str(daycount))
+    #print("balance = " + str(balance) + ";daycount = " + str(daycount))
     return market_list , math.pow(balance, 365.0 / daycount) - 1 if daycount > 0 else 0.0, pagetotal, startdate.strftime('%Y-%m-%d')
 
 

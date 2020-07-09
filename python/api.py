@@ -409,12 +409,12 @@ def searchpage():
     body = []
     for marketitem in marketlist:
         indexline = marketitem
-        if True or indexline[1][0:3] == 'USD' or ',USD' in indexline[1]:
-            volume = indexline[7]
-        elif indexline[11] is not None:
-            volume = indexline[7] * indexline[6] * currenciesDict[indexline[11]]
-        else:
-            volume = indexline[7] * indexline[6]
+        #if True or indexline[1][0:3] == 'USD' or ',USD' in indexline[1]:
+        volume = indexline[7]
+        #elif indexline[11] is not None:
+        #    volume = indexline[7] * indexline[6] * currenciesDict[indexline[11]]
+        #else:
+        #    volume = indexline[7] * indexline[6]
         result = {
             'ItemNo':indexline[0], 
             'Market':'<span><p>' + indexline[1].replace(',','</p><p>') + '</p></span>',
@@ -428,10 +428,18 @@ def searchpage():
             "Side":indexline[8],
             "Score":round(indexline[9],2),
             "Class":'rise' if '涨' in indexline[8] else 'fall',
-            "Symbol":"market/" + indexline[10] + ".html"
+            "Symbol":"market/" + indexline[10] + ".html",
+            "Annualised": indexline[11]
             }
+        if indexline[11] <= 0:
+            result["Class"] += ' loss'
+        else:
+            result["Class"] += ' win'
+        print("Class="+result["Class"])
         body.append(result)
-    body.sort(reverse = True, key = lambda line:(line["Score"]))
+    body.sort(reverse = True, key = lambda line:(line["Annualised"]))
+    for bodyitem in body:
+        bodyitem["Annualised"] = str(round(bodyitem["Annualised"] * 100, 2)) + "%"
     itemNo = 0
     for indexline in body:
         itemNo += 1
