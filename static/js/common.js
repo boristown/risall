@@ -1081,3 +1081,59 @@ function expandMarketTable() {
         trs[i].cells[10].style.display = '';
     }
 };
+
+
+function IndexOrientationChange() {
+    //如果宽度>=高度，就显示电脑界面
+    if (window.innerWidth >= window.innerHeight) {
+        expandIndexTable();
+    }
+    //如果宽度<高度，就显示手机界面
+    else {
+        collapseIndexTable();
+    };
+};
+
+//折叠TABLE
+function collapseIndexTable() {
+    var tab = document.getElementsByClassName("floatindextable");
+    for (let i = 0, len = tab.length; i < len; i++) {
+        tab[i].style.width = '100%';
+        tab[i].style.display = '';
+    }
+    //var trs = tab.rows;
+    //for (let i = 0, len = trs.length; i < len; i++) {
+    //    trs[i].cells[1].style.display = 'none';
+    //    trs[i].cells[2].style.display = 'none';
+    //    trs[i].cells[3].style.display = 'none';
+    //    trs[i].cells[4].style.display = 'none';
+    //    trs[i].cells[5].style.display = 'none';
+    //    trs[i].cells[6].style.display = 'none';
+    //    trs[i].cells[7].style.display = 'none';
+    //    trs[i].cells[8].style.display = 'none';
+    //    trs[i].cells[9].style.display = 'none';
+    //    trs[i].cells[10].style.display = 'none';
+    //}
+};
+
+//展开TABLE
+function expandIndexTable() {
+    var tab = document.getElementsByClassName("floatindextable");
+    for (let i = 0, len = tab.length; i < len; i++) {
+        tab[i].style.width = '33%';
+        tab[i].style.display = 'inline-block';
+    }
+    //var trs = tab.rows;
+    //for (let i = 0, len = trs.length; i < len; i++) {
+    //    trs[i].cells[1].style.display = '';
+    //    trs[i].cells[2].style.display = '';
+    //    trs[i].cells[3].style.display = '';
+    //    trs[i].cells[4].style.display = '';
+    //    trs[i].cells[5].style.display = '';
+    //    trs[i].cells[6].style.display = '';
+    //    trs[i].cells[7].style.display = '';
+    //    trs[i].cells[8].style.display = '';
+    //    trs[i].cells[9].style.display = '';
+    //    trs[i].cells[10].style.display = '';
+    //}
+};

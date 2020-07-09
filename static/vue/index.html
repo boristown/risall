@@ -271,6 +271,9 @@
         //读取l(list)参数
         listname = getQueryVariable("l")
 
+        window.onorientationchange = IndexOrientationChange;
+        window.onresize = IndexOrientationChange;
+        
         var vue_app = new Vue({
             el: '#vue_app',
             data: {
