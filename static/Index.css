@@ -508,8 +508,8 @@ table.indextable img {
 table.floatindextable {
     animation: fadein10 0.75s;
     border: none;
-    /*float: left;*/
-    display: inline-block;
+    /*float: left;
+    display: inline-block;*/
     margin-left: auto;
     margin-right: auto;
     width: 36em;

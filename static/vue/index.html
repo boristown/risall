@@ -271,6 +271,7 @@
         //读取l(list)参数
         listname = getQueryVariable("l")
 
+        window.onload = IndexOrientationChange;
         window.onorientationchange = IndexOrientationChange;
         window.onresize = IndexOrientationChange;
         
