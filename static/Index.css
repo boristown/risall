@@ -713,3 +713,9 @@ table.marketlisttable td,
 #MarketTable td {
     word-break: break-all;
 }
+
+#priceAxis path,
+#balanceAxis path {
+    stroke-width: 0;
+    opacity: 0;
+}

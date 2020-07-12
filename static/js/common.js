@@ -203,8 +203,8 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
             .domain(d3.extent(data, function (d) { return d.date; }))
             .range([0, g_width]);
         scale_x_list.push(scale_x)
-        //var scale_y = d3.scaleLinear()
-        var scale_y = d3.scaleLog()
+        var scale_y = d3.scaleLinear()
+        //var scale_y = d3.scaleLog()
             //.exponent(2)
             //.domain([0, d3.max(data)])
             //.domain([d3.min(data[1]), d3.max(data[1])])
@@ -212,8 +212,8 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
             .domain(d3.extent(data, function (d) { return d.close; }))
             .range([g_height, 0]);
 
-        //var scale_balance = d3.scaleLinear()
-        var scale_balance = d3.scaleLog()
+        var scale_balance = d3.scaleLinear()
+        //var scale_balance = d3.scaleLog()
             //.exponent(2)
             //.domain([0, d3.max(data)])
             //.domain([d3.min(data[1]), d3.max(data[1])])
@@ -294,15 +294,17 @@ function loadd3chart(data_tabs, data_dict, market_name, p_startdatestr) {
         //Y轴
         g.append("g")
             .call(d3.axisRight(scale_y))
-            .attr("stroke-width","1")
+            .attr("stroke-width","0")
             .attr("class", "price")
+            .attr("id", "priceAxis")
 
         //Y轴
         g.append("g")
             .call(d3.axisLeft(scale_balance))
             .attr("transform", "translate(" + g_width + ",0)")
-            .attr("stroke-width", "1")
+            .attr("stroke-width", "0")
             .attr("class", "balance")
+            .attr("id", "balanceAxis")
 
         //y轴文字
         g.append("text")
