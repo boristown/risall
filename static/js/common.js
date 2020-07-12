@@ -728,6 +728,17 @@ function drawItemFrame(item, itemindex, tableitems) {
     let exitposition = entryquantity * exitprice; //离场头寸金额
     let profitamount = isBuy ? exitposition - entryposition : entryposition - exitposition; //盈利金额
 
+    //如果宽度>=高度，就显示电脑界面
+    if (window.innerWidth >= window.innerHeight) {
+        canvas.style.height = '600px';
+        canvas.style.width = '600px';
+    }
+    //如果宽度<高度，就显示手机界面
+    else {
+        canvas.style.height = '100vw';
+        canvas.style.width = '100vw';
+    }
+
     clientW = parseInt(document.body.clientWidth);
     canvas.setAttribute("width", canvasW)
     canvas.setAttribute("height", canvasH)
