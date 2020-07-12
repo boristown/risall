@@ -39,8 +39,18 @@ function initanimation() {
 	var flag = false;
 	//2.box绑定鼠标按下事件
 	//var delX = 50;
-    var delY = mouseDis + canvasH;
-    var delX = canvasW / 2.0;
+
+    //如果宽度>=高度，就显示电脑界面
+    if (window.innerWidth >= window.innerHeight) {
+        var delY = mouseDis + canvasH;
+        var delX = canvasW / 2.0;
+    }
+    //如果宽度<高度，就显示手机界面
+    else {
+        var delY = mouseDis + window.innerWidth;
+        var delX = window.innerWidth / 2.0;
+    }
+
 
 	//document.onmousedown = function () {
 	//	flag = true;
@@ -66,9 +76,18 @@ function initanimation() {
             x = 0;
         if (y < 0)
             y = 0;
-        if (x > document.body.clientWidth - canvasW) {
-            x = document.body.clientWidth - canvasW;
-        };
+
+        //如果宽度>=高度，就显示电脑界面
+        if (window.innerWidth >= window.innerHeight) {
+            if (x > document.body.clientWidth - canvasW) {
+                x = document.body.clientWidth - canvasW;
+            };
+        }
+        //如果宽度<高度，就显示手机界面
+        else {
+            x = 0; 
+        }
+
 		animationdiv.style.left = x + 'px';
 		animationdiv.style.top = y + 'px';
 	};
