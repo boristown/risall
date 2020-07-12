@@ -112,6 +112,7 @@
                             <td>{[ item.Balance ]}</td>
                         </tr>
                     </table>
+                    <div>共{[pagetotal]}页</div>
                     <div class="page-bar">
                         <ul>
                             <li v-if="pageindex>1"><a v-on:click="pageindex--,pageClick()">上一页</a></li>
@@ -121,15 +122,14 @@
                             </li>
                             <li v-if="pageindex!=pagetotal"><a v-on:click="pageindex++,pageClick()">下一页</a></li>
                             <li v-if="pageindex==pagetotal"><a class="banclick">下一页</a></li>
-                            <li><a>共<i>{[pagetotal]}</i>页</a></li>
                         </ul>
                     </div>
-                    <br>
-                    <div id="footer">联系AI纪元-预测线：forcastline@163.com</div>
-                    <div id="footer"><a href="http://www.beian.miit.gov.cn/">京ICP备20013339号</a></div>
+                     <br>
+                        <div id="footer">联系AI纪元-预测线：forcastline@163.com</div>
+                        <div id="footer"><a href="http://www.beian.miit.gov.cn/">京ICP备20013339号</a></div>
+                    </div>
+                    </div>
                 </div>
-        </div>
-    </div>
     <script src="../js/d3.min.js" charset="utf-8"></script>
     <script src='../js/common.js' charset="utf-8"></script>
     <script>

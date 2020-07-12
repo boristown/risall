@@ -675,7 +675,7 @@ table.floatindextable tr:hover th {
     line-height: 1.42857143;
     color: #cdd6db;
     cursor: pointer;
-    margin-right: 20px;
+    margin-right: 0px;
 }
 
 .page-bar a:hover {
