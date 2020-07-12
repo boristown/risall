@@ -1076,8 +1076,7 @@ function drawItemFrame(item, itemindex, tableitems) {
     //ctx.fillText((isBuy ? "收入Income " : "支出Expenses ") + "金额Amt:$" + exitposition, spanL, curY + fontH);
 };
 
-
-function marketOrientationChange() {
+function marketTableAdjust() {
     //如果宽度>=高度，就显示电脑界面
     if (window.innerWidth >= window.innerHeight) {
         expandMarketTable();
@@ -1086,6 +1085,10 @@ function marketOrientationChange() {
     else {
         collapseMarketTable();
     };
+}
+
+function marketOrientationChange() {
+    marketTableAdjust();
     loadd3chart(g_data_tabs, g_data_dict, g_market_name, g_startdate);
 };
 
@@ -1125,6 +1128,46 @@ function expandMarketTable() {
     }
 };
 
+
+
+function MarketListOrientationChange() {
+    //如果宽度>=高度，就显示电脑界面
+    if (window.innerWidth >= window.innerHeight) {
+        expandMarketListTable();
+    }
+    //如果宽度<高度，就显示手机界面
+    else {
+        collapseMarketListTable();
+    };
+};
+
+//折叠TABLE
+function collapseMarketListTable() {
+    var tab = document.getElementsByClassName("marketlisttable");
+    var trs = tab[0].rows;
+    for (let i = 0, len = trs.length; i < len; i++) {
+        trs[i].cells[0].style.width = '70%';
+        trs[i].cells[1].style.display = 'none';
+        trs[i].cells[2].style.display = 'none';
+        trs[i].cells[3].style.width = '30%';
+    }
+};
+
+//展开TABLE
+function expandMarketListTable() {
+    var tab = document.getElementsByClassName("marketlisttable");
+    var trs = tab[0].rows;
+    for (let i = 0, len = trs.length; i < len; i++) {
+        trs[i].cells[0].style.display = '';
+        trs[i].cells[0].style.width = '50%';
+        trs[i].cells[1].style.display = '';
+        trs[i].cells[1].style.width = '15%';
+        trs[i].cells[2].style.display = '';
+        trs[i].cells[2].style.width = '15%';
+        trs[i].cells[3].style.display = '';
+        trs[i].cells[3].style.width = '20%';
+    }
+};
 
 function IndexOrientationChange() {
     //如果宽度>=高度，就显示电脑界面

@@ -81,16 +81,16 @@
                     <table border="0" width="100%" id="MarketTable">
                         <tr class="head">
                             <th>日期Date</th>
-                            <th>开盘价Open</th>
-                            <th>最高价High</th>
-                            <th>最低价Low</th>
-                            <th><b>当前价Current</b></th>
-                            <th>今日上涨Today</th>
-                            <th>操作Operation</th>
-                            <th>评分Score</th>
-                            <th>均幅ATR</th>
-                            <th>止损价StopPrice</th>
-                            <th>止损日期StopDate</th>
+                            <th v-show="isPC">开盘价Open</th>
+                            <th v-show="isPC">最高价High</th>
+                            <th v-show="isPC">最低价Low</th>
+                            <th v-show="isPC"><b>当前价Current</b></th>
+                            <th v-show="isPC">今日上涨Today</th>
+                            <th v-show="isPC">操作Operation</th>
+                            <th v-show="isPC">评分Score</th>
+                            <th v-show="isPC">均幅ATR</th>
+                            <th v-show="isPC">止损价StopPrice</th>
+                            <th v-show="isPC">止损日期StopDate</th>
                             <th>收益Profit</th>
                             <th>余额Balance</th>
                         </tr>
@@ -98,16 +98,16 @@
                             @mouseover="drawItemAnimation(item, itemindex)"
                             @mouseout="clearItemAnimation(item, itemindex)">
                             <td>{[ item.Date ]}</td>
-                            <td>{[ item.Open ]}</td>
-                            <td>{[ item.High ]}</td>
-                            <td>{[ item.Low ]}</td>
-                            <td><b>{[ item.Close ]}</b></td>
-                            <td>{[ item.Today ]}</td>
-                            <td>{[ item.Prediction ]}</td>
-                            <td>{[ item.Score ]}</td>
-                            <td>{[ item.ATR ]}</td>
-                            <td>{[ item.StopPrice ]}</td>
-                            <td>{[ item.StopDate ]}</td>
+                            <td v-show="isPC">{[ item.Open ]}</td>
+                            <td v-show="isPC">{[ item.High ]}</td>
+                            <td v-show="isPC">{[ item.Low ]}</td>
+                            <td v-show="isPC"><b>{[ item.Close ]}</b></td>
+                            <td v-show="isPC">{[ item.Today ]}</td>
+                            <td v-show="isPC">{[ item.Prediction ]}</td>
+                            <td v-show="isPC">{[ item.Score ]}</td>
+                            <td v-show="isPC">{[ item.ATR ]}</td>
+                            <td v-show="isPC">{[ item.StopPrice ]}</td>
+                            <td v-show="isPC">{[ item.StopDate ]}</td>
                             <td>{[ item.Profit ]}</td>
                             <td>{[ item.Balance ]}</td>
                         </tr>
@@ -141,6 +141,7 @@
         var g_data_tabs = null;
         var g_data_dict = null;
 
+        window.onload = marketTableAdjust;
         window.onorientationchange = marketOrientationChange;
         window.onresize = marketOrientationChange;
 
@@ -167,7 +168,8 @@
                 startdate: null,
                 pagetotal: 1,
                 pageindex: 1,
-                pagesize: 100
+                pagesize: 100,
+                isPC: true
             },
             updated() {
 
@@ -216,6 +218,15 @@
                             g_data_tabs = response.data.price_list;
                             //Data Dict
                             g_data_dict = response.data.data_dict;
+
+                            //如果宽度>=高度，就显示电脑界面
+                            if (window.innerWidth >= window.innerHeight) {
+                                this.isPC = true;
+                            }
+                            //如果宽度<高度，就显示手机界面
+                            else {
+                                this.isPC = false;
+                            };
 
                             marketOrientationChange();
                             initanimation();

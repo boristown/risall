@@ -700,3 +700,16 @@ table.floatindextable tr:hover th {
     margin: 0px 4px;
     font-size: 12px;
 }
+
+table.marketlisttable, #MarketTable {
+    table-layout: fixed;
+    width: 100%;
+    border: 0;
+}
+
+table.marketlisttable th,
+table.marketlisttable td,
+#MarketTable th,
+#MarketTable td {
+    word-break: break-all;
+}
