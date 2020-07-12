@@ -42,13 +42,17 @@ function initanimation() {
 
     //如果宽度>=高度，就显示电脑界面
     if (window.innerWidth >= window.innerHeight) {
-        var delY = mouseDis + canvasH;
+        //var delY = mouseDis + canvasH;
         var delX = canvasW / 2.0;
+        animationdiv.style.width = '600px'
+        animationdiv.style.height = '600px'
     }
     //如果宽度<高度，就显示手机界面
     else {
-        var delY = mouseDis + window.innerWidth;
+        //var delY = mouseDis + window.innerWidth;
         var delX = window.innerWidth / 2.0;
+        animationdiv.style.width = '100vw'
+        animationdiv.style.height = '100vw'
     }
 
 
@@ -62,31 +66,40 @@ function initanimation() {
 	//3.整个文档绑定鼠标移动事件
 	document.onmousemove = function () {
 		var x = event.pageX - delX;
-        var y = event.pageY - delY;
         var clientY = event.clientY;
-        //显示在鼠标下方
-        if (clientY < document.body.clientHeight / 2) {
-            delY = - mouseDis;
-        }
-        //显示在鼠标上方
-        else {
-            delY = mouseDis + canvasH;
-        };
-        if (x < 0)
-            x = 0;
-        if (y < 0)
-            y = 0;
-
         //如果宽度>=高度，就显示电脑界面
         if (window.innerWidth >= window.innerHeight) {
             if (x > document.body.clientWidth - canvasW) {
                 x = document.body.clientWidth - canvasW;
             };
+            //显示在鼠标下方
+            if (clientY < document.body.clientHeight / 2) {
+                var delY = - mouseDis;
+            }
+            //显示在鼠标上方
+            else {
+                var delY = mouseDis + canvasH;
+            };
         }
         //如果宽度<高度，就显示手机界面
         else {
-            x = 0; 
+            //显示在最左边
+            x = 0;
+            //显示在鼠标下方
+            if (clientY < document.body.clientHeight / 2) {
+                var delY = - mouseDis;
+            }
+            //显示在鼠标上方
+            else {
+                var delY = mouseDis + window.innerWidth;
+            };
         }
+
+        var y = event.pageY - delY;
+        if (x < 0)
+            x = 0;
+        if (y < 0)
+            y = 0;
 
 		animationdiv.style.left = x + 'px';
 		animationdiv.style.top = y + 'px';

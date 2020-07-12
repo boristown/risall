@@ -621,7 +621,7 @@ table.floatindextable tr:hover th {
     /*border: 2px solid #F00;*/
     border: none;
     position: absolute;
-    left: 1vw;
+    left: 0vw;
     top: 100px;
     pointer-events: none;
 }
