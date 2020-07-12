@@ -251,6 +251,25 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
     lineno = 0
     atr = 0.0
     balance = 1.0
+    trsum = 0
+    for list_result in list_results:
+        Open = list_result[1]
+        High = list_result[2]
+        Low = list_result[3]
+        Close = list_result[4]
+        if last_c == 0:
+            last_c = Open #Open Price
+        tr = max(High, last_c) / min(Low, last_c) - 1.0
+        last_c = Close
+        if tr > 9.0 or tr == 0:
+            continue
+        lineno += 1
+        trsum += tr
+    atr = trsum / lineno
+    
+    last_c = 0
+    lineno = 0
+
     for list_result in list_results:
         Date = list_result[0]
         Open = list_result[1]
@@ -261,23 +280,28 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
             balance = list_result[9]
         if last_c == 0:
             last_c = Open #Open Price
-        tr = max(High, last_c) / min(Low, last_c) - 1.0
-        if tr > 9.0 or tr == 0:
-            continue
-        lineno += 1
-        tr0 = tr / 120.0
-        #添加最新TR0值
-        tr0list.append(tr0)
-        atr += tr0
-        if lineno > 120:
-            #删除120天前的TR0值
-            atr -= tr0list.pop(0)
+        else:
+            if last_c < Low:
+                Low = last_c
+            elif last_c > High:
+                High = last_c
+        #tr = max(High, last_c) / min(Low, last_c) - 1.0
         last_c = Close
+        #if tr > 9.0 or tr == 0:
+        #    continue
+        lineno += 1
+        #tr0 = tr / 120.0
+        #添加最新TR0值
+        #tr0list.append(tr0)
+        #atr += tr0
+        #if lineno > 120:
+        #    #删除120天前的TR0值
+        #    atr -= tr0list.pop(0)
         if list_result[7] > 0 and atr > 0:
             #模拟交易
             for oldorder in orderlist:
-                if 'Buy' in oldorder["Prediction"]:#buy 
-                    if Low < oldorder["StopPrice"]:#Stop
+                if 'Buy' in oldorder["Prediction"]: #buy 
+                    if Low < oldorder["StopPrice"]: #Stop
                         oldorder["StopDate"] = Date
                         quantity = oldorder["Balance"] * 0.01 / oldorder["Close"] / oldorder["ATR"]
                         buyamount = quantity * oldorder["Close"]
@@ -297,8 +321,8 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                     else:
                         oldorder["TrailingPrice"] = max(oldorder["TrailingPrice"], High)
                         oldorder["StopPrice"] = oldorder["TrailingPrice"] / (atr + 1)
-                else:#sell
-                    if High > oldorder["StopPrice"]:#Stop
+                else: #sell
+                    if High > oldorder["StopPrice"]: #Stop
                         oldorder["StopDate"] = Date
                         quantity = oldorder["Balance"] * 0.01 / oldorder["Close"] / oldorder["ATR"]
                         sellamount = quantity * oldorder["Close"]
