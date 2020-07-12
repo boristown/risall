@@ -1003,8 +1003,8 @@ function drawItemFrame(item, itemindex, tableitems) {
     ctx.globalAlpha = "0.5";
     ctx.fillStyle = cancasWinColor;
 
-    textRectW = 300;
-    textRectH = 200;
+    textRectW = 540;
+    textRectH = 380;
     textRectLeft = textLocationX - textRectW / 2.0;
     textRectTop = textLocationY - textRectH / 2.0;
     if (textRectLeft < 0) textRectLeft = 0;
@@ -1012,15 +1012,15 @@ function drawItemFrame(item, itemindex, tableitems) {
     if (textRectLeft + textRectW > canvasW) textRectLeft = canvasW - textRectW;
     if (textRectTop + textRectH > canvasH - bottomMargin) textRectTop = canvasH - bottomMargin - textRectH;
 
-    ctx.font = "80px serif";
-    fontHeight = 80;
+    ctx.font = "160px serif";
+    fontHeight = 160;
     //ctx.fillRect(textRectLeft, textRectTop, textRectW, textRectH);
     ctx.fillText(item.Profit, textRectLeft, textRectTop + fontHeight + 50);
     //13	在图层11上显示“AI预测XX评分XX触发做多 / 做空，ATR = XX %”，在图层12上显示“从价格XX下跌1倍ATR触发止损，盈利 / 亏损=XX %“，只显示2位有效数字。
     let textLeft = 2;
 
-    ctx.font = "12px serif";
-    fontHeight = 13;
+    ctx.font = "23px serif";
+    fontHeight = 23;
     ctx.globalAlpha = "1";
     ctx.fillStyle = canvasColor;
     ctx.fillText("AI指令:" +item.Prediction + " ATR:" + item["ATR"].toString(), textRectLeft + textLeft, textRectTop + fontHeight, textRectW);
