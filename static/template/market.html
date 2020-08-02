@@ -52,15 +52,32 @@
             </h2>
             <h1 class="hidewhensimulation">{{market_name}}</h1>
             <h2 class="hidewhensimulation">{{market_prediction}}</h2>
-            <h3 class="hidewhensimulation">更新时间Updated Time: {{localtime}}（每60分钟更新一次Updated every 60 minutes）</h3>
-
+            <!--实现多种交易系统的切换-->
+            <table class="hidewhensimulation" id="SystemSwitcherTable">
+                <tr>
+                    <th :class="AISystemSwitcherClass"
+                        v-on:mouseenter="AISystemSwitcherMouseenter"
+                        v-on:mouseout="AISystemSwitcherMouseout"
+                        v-on:click="AISystemSwitcherClick">
+                        海龟三号AI交易系统
+                        Turtle No.3 AI Trading System
+                    </th>
+                    <th :class="TurtleSystemSwitcherClass"
+                        v-on:mouseenter="TurtleSystemSwitcherMouseenter"
+                        v-on:mouseout="TurtleSystemSwitcherMouseout"
+                        v-on:click="TurtleSystemSwitcherClick">
+                        原版海龟交易系统
+                        Original Turtle Trading System
+                    </th>
+                </tr>
+            </table>
             <a href="../vue/index.htm">
                 <img src="../logo.bmp" alt="预测线Forcastline" height="150px" width="150px">
              </a>
                 <div class="search bar7">
                     <form action="/s" method="get">
                         <!--<label for="search">查找市场</label>-->
-                        <input type="search" name="wd" id="search" placeholder="请输入市场名，例如：上证指数、黄金">
+                        <input type="search" name="wd" id="search" placeholder="请输入市场名，例如：上证指数、黄金、比特币">
                         <button type="submit"></button>
                     </form>
                 </div>
@@ -124,162 +141,19 @@
                             <li v-if="pageindex==pagetotal"><a class="banclick">下一页</a></li>
                         </ul>
                     </div>
-                     <br>
-                        <div id="footer">联系AI纪元-预测线：forcastline@163.com</div>
-                        <div id="footer"><a href="http://www.beian.miit.gov.cn/">京ICP备20013339号</a></div>
-                    </div>
+                    <br>
+                    <div id="footer">
+                        更新时间Updated Time: {{localtime}}（每60分钟更新一次Updated every 60 minutes）<br>
+                        联系AI纪元-预测线：forcastline@163.com<br>
+                        <a href="http://www.beian.miit.gov.cn/">京ICP备20013339号</a>
                     </div>
                 </div>
+            </div>
     <script src="../js/d3.min.js" charset="utf-8"></script>
     <script src='../js/common.js' charset="utf-8"></script>
     <script>
-        //读取m(market)参数
-        //marketid = getQueryVariable("id")
-        marketid = "{{ market_id }}"
-        var g_market_name = "";
-        var g_startdate = null;
-        var g_data_tabs = null;
-        var g_data_dict = null;
-
-        window.onload = marketTableAdjust;
-        window.onorientationchange = marketOrientationChange;
-        window.onresize = marketOrientationChange;
-
-        let canvasH = 600; //画布高度
-        let canvasW = 600; //画布宽度
-        let mouseDis = 50; //鼠标距离
-        let longwidth = 1000;
-        let shortwidth = 500;
-        let buyStyle = 'rgba(200, 70, 50, 1)';
-        let sellStyle = 'rgba(50, 200, 80, 1)';
-        let bartextStyle = 'rgb(20, 20, 20, 1)';
-
-        var vue_app = new Vue({
-            el: '#vue_app',
-            delimiters: ['{[', ']}'],
-            data: {
-                donatehtml: null,
-                market_type: null,
-                market_type_ref: null,
-                market_name: null,
-                market_prediction: null,
-                localtime: null,
-                tableitems: [],
-                startdate: null,
-                pagetotal: 1,
-                pageindex: 1,
-                pagesize: 100,
-                isPC: true
-            },
-            updated() {
-
-            },
-            mounted() {
-                this.callApi();
-            },
-            methods: {
-                //分页
-                btnClick: function (index) {//页码点击事件
-                    if (index != this.pageindex) {
-                        this.pageindex = index
-                    }
-                    //根据点击页数请求数据
-                    this.callApi();
-                },
-                pageClick: function () {
-                    //根据点击页数请求数据
-                    this.callApi();
-                },
-                callApi: function () {
-                    axios
-                        .get('/api/m?id=' + marketid + '&pageindex=' + this.pageindex.toString() + '&pagesize=' + this.pagesize.toString())
-                        .then(response => {
-                            //Title
-                            document.title = response.data.title;
-                            //Donate
-                            this.donatehtml = response.data.donate;
-                            //Market Type
-                            this.market_type = response.data.market_type;
-                            //Data Tabs
-                            this.market_type_ref = response.data.market_type_ref;
-                            //Market Name
-                            g_market_name = this.market_name = response.data.market_name;
-                            //Market Prediction
-                            this.market_prediction = response.data.market_prediction;
-                            //localtime
-                            this.localtime = response.data.localtime;
-                            //tableitems
-                            this.tableitems = response.data.tableitems;
-                            //Page Total
-                            this.pagetotal = response.data.pagetotal;
-                            //start date
-                            g_startdate = this.startdate = response.data.startdate;
-                            //Data tabs
-                            g_data_tabs = response.data.price_list;
-                            //Data Dict
-                            g_data_dict = response.data.data_dict;
-
-                            //如果宽度>=高度，就显示电脑界面
-                            if (window.innerWidth >= window.innerHeight) {
-                                this.isPC = true;
-                            }
-                            //如果宽度<高度，就显示手机界面
-                            else {
-                                this.isPC = false;
-                            };
-
-                            marketOrientationChange();
-                            initanimation();
-                            //setTimeout("particleConnector()", "2000");
-                            ////Make donate bar
-                            //for (var i = 0; i < 3; i++) {
-                            //    this.donates = this.donates.concat(this.donates)
-                            //};
-                            //for (var i = 0; i < this.donates.length; i++) {
-                            //    this.donates[i] = "<span>" + this.donates[i] + "                                         </span>"
-                            //}
-                        })
-                },
-                //绘制动画（只有当鼠标指向的item改变时它才会动）
-                drawItemAnimation: function (item, itemindex) {
-                    drawItemFrame(item, itemindex, this.tableitems);
-                },
-                //清空动画
-                clearItemAnimation: function (item, itemindex) {
-                    clearItemFrame(item, itemindex, this.tableitems);
-                    //let canvas = document.getElementById('itemaninationcanvas');
-                    //let ctx = canvas.getContext('2d');
-                    //ctx.clearRect(0, 0, canvas.width, canvas.height);  
-                },
-            },
-            computed: {
-                //分页
-                pageindexlist: function () {
-                    var left = 1;
-                    var right = this.pagetotal;
-                    var ar = [];
-                    if (this.pagetotal >= 5) {
-                        if (this.pageindex > 3 && this.pageindex < this.pagetotal - 2) {
-                            left = this.pageindex - 2
-                            right = this.pageindex + 2
-                        } else {
-                            if (this.pageindex <= 3) {
-                                left = 1
-                                right = 5
-                            } else {
-                                right = this.pagetotal
-                                left = this.pagetotal - 4
-                            }
-                        }
-                    }
-                    while (left <= right) {
-                        ar.push(left)
-                        left++
-                    }
-                    return ar
-                }
-            }
-        });
+        var marketid = "{{ market_id }}"
     </script>
+    <script src='../js/market.js' charset="utf-8"></script>
 </body>
 </html>

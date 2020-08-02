@@ -317,7 +317,7 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                         else:
                             oldorder["Profit"] = str(round(Profit / oldorder["Balance"] * 100, 2)) + '%' if oldorder["Balance"] > 0 else '0%'
                         orderlist.remove(oldorder)
-                        continue
+                        #continue
                     else:
                         oldorder["TrailingPrice"] = max(oldorder["TrailingPrice"], High)
                         oldorder["StopPrice"] = oldorder["TrailingPrice"] / (atr + 1)
@@ -338,7 +338,7 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                         else:
                             oldorder["Profit"] = str(round(Profit / oldorder["Balance"] * 100, 2)) + '%' if oldorder["Balance"] > 0 else '0%'
                         orderlist.remove(oldorder)
-                        continue
+                        #continue
                     else:
                         oldorder["TrailingPrice"] = min(oldorder["TrailingPrice"], Low)
                         oldorder["StopPrice"] = oldorder["TrailingPrice"] * (atr + 1)
@@ -434,7 +434,7 @@ def get_market_prices(market_id):
                         else:
                             oldorder["Profit"] = str(round(Profit / oldorder["Balance"] * 100, 3)) + '%' if oldorder["Balance"] > 0 else '0%'
                         orderlist.remove(oldorder)
-                        continue
+                        #continue
                     else:
                         oldorder["TrailingPrice"] = max(oldorder["TrailingPrice"], High)
                         oldorder["StopPrice"] = oldorder["TrailingPrice"] / (atr + 1)
@@ -451,7 +451,7 @@ def get_market_prices(market_id):
                         else:
                             oldorder["Profit"] = str(round(Profit / oldorder["Balance"] * 100, 3)) + '%' if oldorder["Balance"] > 0 else '0%'
                         orderlist.remove(oldorder)
-                        continue
+                        #continue
                     else:
                         oldorder["TrailingPrice"] = min(oldorder["TrailingPrice"], Low)
                         oldorder["StopPrice"] = oldorder["TrailingPrice"] * (atr + 1)

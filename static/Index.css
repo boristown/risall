@@ -719,3 +719,39 @@ table.marketlisttable td,
     stroke-width: 0;
     opacity: 0;
 }
+
+/*交易系统切换表格*/
+#SystemSwitcherTable {
+    table-layout: fixed;
+    width: 100%;
+    border: 0;
+    text-align: center
+}
+
+/*交易系统切换按钮*/
+#SystemSwitcherTable th {
+    width: 50%;
+    height: 40px;
+    font-size: 20px;
+    border-width: 2px 2px 2px 2px;
+    border-style: solid;
+}
+
+/*交易系统切换按钮--选中*/
+#SystemSwitcherTable .selected {
+    background-color: white;
+    color: black;
+    border-color: black;
+}
+
+/*交易系统切换按钮--取消选中*/
+#SystemSwitcherTable .unselected {
+    background-color: black;
+    color: white;
+    border-color: white;
+}
+
+/*交易系统切换按钮--鼠标移入*/
+#SystemSwitcherTable .focused {
+    font-weight: bold;
+}
