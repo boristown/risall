@@ -23,7 +23,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="python\api.py">
+    <Compile Include="python\app.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="python\donate.py">

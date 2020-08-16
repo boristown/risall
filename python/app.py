@@ -17,13 +17,14 @@ import time
 import math
 
 app = Flask(__name__,static_url_path='',root_path='C:\Forcastlinecom')
-api = Api(app)
+#app = Flask(__name__)
+#api = Api(app)
 
-TODOS = {
-    'todo1': {'task': 'build an API'},
-    'todo2': {'task': '哈哈哈'},
-    'todo3': {'task': 'profit!'},
-}
+#TODOS = {
+#    'todo1': {'task': 'build an API'},
+#    'todo2': {'task': '哈哈哈'},
+#    'todo3': {'task': 'profit!'},
+#}
 #context = SSL.Context(SSL.PROTOCOL_TLSv1_2)
 #context.use_privatekey_file('www-forcastline-com-iis-0614213034.pfx')
 #context.use_certificate_file('www-forcastline-com-iis-0614213034.pfx')
@@ -33,41 +34,13 @@ def abort_if_todo_doesnt_exist(todo_id):
         abort(404, message="Todo {} doesn't exist".format(todo_id))
 
 
-parser = reqparse.RequestParser()
-parser.add_argument('task')
-parser.add_argument('wd')
+#parser = reqparse.RequestParser()
+#parser.add_argument('task')
+#parser.add_argument('wd')
 
-
-# # 操作（put / get / delete）单一资源Todo
-# shows a single todo item and lets you delete a todo item
-class Todo(Resource):
-    def get(self, todo_id):
-        abort_if_todo_doesnt_exist(todo_id)
-        return TODOS[todo_id]
-
-    def delete(self, todo_id):
-        abort_if_todo_doesnt_exist(todo_id)
-        del TODOS[todo_id]
-        return '', 204
-
-    def put(self, todo_id):
-        args = parser.parse_args()
-        task = {'task': args['task']}
-        TODOS[todo_id] = task
-        return task, 201
-
-# # 操作（post / get）资源列表TodoList
-# shows a list of all todos, and lets you POST to add new tasks
-class TodoList(Resource):
-    def get(self):
-        return TODOS
-
-    def post(self):
-        args = parser.parse_args()
-        todo_id = int(max(TODOS.keys()).lstrip('todo')) + 1
-        todo_id = 'todo%i' % todo_id
-        TODOS[todo_id] = {'task': args['task']}
-        return TODOS[todo_id], 201
+@app.route('/a')
+def routea():
+    return 'hello flask a'
 
 def init_mycursor():
     myconnection = mysql.connector.connect(host=mypsw.host,
@@ -148,46 +121,14 @@ def getMarket(wd):
         return [],[]
     return mydb.get_search_list(markets), markets
 
-# # 操作（post / get）资源列表TodoList
-# shows a list of all todos, and lets you POST to add new tasks
-class Search(Resource):
-    def get(self):
-        args = parser.parse_args()
-        wd = args['wd']
-        marketsList, markets = getMarket(wd)
-        return marketsList
-
-    def post(self):
-        args = parser.parse_args()
-        todo_id = int(max(TODOS.keys()).lstrip('todo')) + 1
-        todo_id = 'todo%i' % todo_id
-        TODOS[todo_id] = {'task': args['task']}
-        return TODOS[todo_id], 201
-
-@contextlib.contextmanager
-def pfx_to_pem(pfx_path, pfx_password):
-    ''' Decrypts the .pfx file to be used with requests. '''
-    with tempfile.NamedTemporaryFile(suffix='.pem', delete=False) as t_pem:
-        f_pem = open(t_pem.name, 'wb')
-        pfx = open(pfx_path, 'rb').read()
-        p12 = OpenSSL.crypto.load_pkcs12(pfx, pfx_password)
-        f_pem.write(OpenSSL.crypto.dump_privatekey(OpenSSL.crypto.FILETYPE_PEM, p12.get_privatekey()))
-        f_pem.write(OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, p12.get_certificate()))
-        ca = p12.get_ca_certificates()
-        if ca is not None:
-            for cert in ca:
-                f_pem.write(OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_PEM, cert))
-        f_pem.close()
-        yield t_pem.name
-
-
 # 设置路由
-api.add_resource(TodoList, '/todos')
-api.add_resource(Todo, '/todos/<todo_id>')
-api.add_resource(Search, '/api/search')
+#api.add_resource(TodoList, '/todos')
+#api.add_resource(Todo, '/todos/<todo_id>')
+#api.add_resource(Search, '/api/search')
 
 @app.route('/')
 def home():
+    #return 'hello flask'
     return app.send_static_file("vue/index.html")
 
 @app.route('/vue')
@@ -209,6 +150,7 @@ def generate_search_html(title,
                                     body=body)
     return html_content
     #fout.write(html_content)
+
 list_name = {
     "currencies":"外汇",
     "crypto":"加密货币",
@@ -320,11 +262,11 @@ def getmarket():
         }
     return resultdict
 
-@app.before_request
-def before_request():
-    if request.url.startswith('http://'):
-        url = request.url.replace('http://', 'https://', 1)
-        return redirect(url, code=301)
+#@app.before_request
+#def before_request():
+#    if request.url.startswith('http://'):
+#        url = request.url.replace('http://', 'https://', 1)
+#        return redirect(url, code=301)
 
 @app.route('/api/l', methods=['post','get'])
 def getlist():
@@ -464,15 +406,15 @@ def page_not_found(error):
     #return render_template("404.html"), 404
     return app.send_static_file("vue/index.html"), 404
 
-if __name__ == '__main__':
-    #app.run(host="0.0.0.0", ssl_context='adhoc')
-    #passwd = ''
-    #p12 = load_pkcs12(open('ssl/www-forcastline-com-iis-0614213034.pfx',
-    #'rb').read(), passwd)
-    #pkey = p12.get_privatekey()
-    #open('ssl/pkey.pem', 'wb').write(dump_privatekey(FILETYPE_PEM, pkey))
-    #cert = p12.get_certificate()
-    #open('ssl/cert.pem', 'wb').write(dump_certificate(FILETYPE_PEM, cert))
-    #ca_certs = p12.get_ca_certificates()
-    #ca_file = open('ssl/ca.pem', 'wb')
-    app.run(host="0.0.0.0", port="443", ssl_context=('../static/ssl/cert.pem','../static/ssl/pkey.pem'), debug=True)
+#if __name__ == '__main__':
+#    #app.run(host="0.0.0.0", ssl_context='adhoc')
+#    #passwd = ''
+#    #p12 = load_pkcs12(open('ssl/www-forcastline-com-iis-0614213034.pfx',
+#    #'rb').read(), passwd)
+#    #pkey = p12.get_privatekey()
+#    #open('ssl/pkey.pem', 'wb').write(dump_privatekey(FILETYPE_PEM, pkey))
+#    #cert = p12.get_certificate()
+#    #open('ssl/cert.pem', 'wb').write(dump_certificate(FILETYPE_PEM, cert))
+#    #ca_certs = p12.get_ca_certificates()
+#    #ca_file = open('ssl/ca.pem', 'wb')
+#    app.run(host="0.0.0.0", port="443", ssl_context=('../static/ssl/cert.pem','../static/ssl/pkey.pem'), debug=True)

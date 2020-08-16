@@ -1,2 +1,2 @@
-python api.py
+python server.py
 pause
