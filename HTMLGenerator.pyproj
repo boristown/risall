@@ -39,6 +39,7 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="python\api.bat" />
+    <Content Include="python\api_loop.bat" />
     <Content Include="static\commodities.html" />
     <Content Include="static\currencies.html" />
     <Content Include="static\donate.html" />

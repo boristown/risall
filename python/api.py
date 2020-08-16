@@ -475,4 +475,4 @@ if __name__ == '__main__':
     #open('ssl/cert.pem', 'wb').write(dump_certificate(FILETYPE_PEM, cert))
     #ca_certs = p12.get_ca_certificates()
     #ca_file = open('ssl/ca.pem', 'wb')
-    app.run(host="0.0.0.0", port="443", ssl_context=('../static/ssl/cert.pem','../static/ssl/pkey.pem'))
+    app.run(host="0.0.0.0", port="443", ssl_context=('../static/ssl/cert.pem','../static/ssl/pkey.pem'), debug=True)
