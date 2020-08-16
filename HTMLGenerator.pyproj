@@ -5,7 +5,7 @@
     <ProjectGuid>9d8faa91-d26d-419c-9b75-da55489b0e4f</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>python\HTMLGenerator.py</StartupFile>
+    <StartupFile>python\server.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>python\</WorkingDirectory>
@@ -32,6 +32,9 @@
     <Compile Include="python\HTMLGenerator.py" />
     <Compile Include="python\mydb.py" />
     <Compile Include="python\mypsw.py" />
+    <Compile Include="python\server.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="python\__init__.py" />
   </ItemGroup>
   <ItemGroup>
