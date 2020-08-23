@@ -15,6 +15,7 @@ import donate
 import datetime
 import time
 import math
+import requests
 
 app = Flask(__name__,static_url_path='',root_path='C:\Forcastlinecom')
 #app = Flask(__name__)
@@ -392,6 +393,22 @@ def searchpage():
                     time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), 
                     body)
     return renderedhtml
+
+@app.route('/api/turtle3', methods=['post','get'])
+def turtle3(): #Call of Turtle No.3 AI
+    #Input: {"Prices":[{"Close":[11,22,33],"High":[12,23,34],"Low":[10,21,32]},{"Close":[21,32,43],"High":[22,33,44],"Low":[20,31,42]}]}
+    #Output: {"RiseProbabilities":[0.6, 0.55]}
+    #Request data
+    body_data = request.data
+    #Get body
+    body_j_data = json.load(body_data)
+    REQUEST_URL = "http://35.236.157.42:8501/v1/models/turtle3:predict"
+    HEADER = {'Content-Type':'application/json; charset=utf-8'}
+    inputpricelist = getInputPriceList(body_j_data)
+    requestDict = {"instances": inputpricelist}
+    rsp = requests.post(REQUEST_URL, data=json.dumps(requestDict), headers=HEADER)
+    riseProb = parseToRiseProb(json.load(rsp))
+    return json.dumps(riseProb)
 
 #@app.route('/<file>')
 #def openfiles():

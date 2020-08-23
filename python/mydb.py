@@ -509,3 +509,36 @@ def get_market_prices(market_id):
     daycount = (lastdate - firstdate ).days
     
     return market_list , math.pow(balance, 365.0 / daycount) - 1 if daycount > 0 else 0.0
+
+#Get Input Price List
+#Input: {"Prices":[{"Close":[11,22,33],"High":[12,23,34],"Low":[10,21,32]},{"Close":[21,32,43],"High":[22,33,44],"Low":[20,31,42]}]}
+def getInputPriceList(body_j_data):
+    pricelistsymbols = body_j_data["Prices"]
+    inputPriceListSymbols = []
+    symbolCount = len(pricelistsymbols)
+    dayscount = len(pricelistsymbols[0]["Close"])
+    for pricelistsymbol in pricelistsymbols:
+        closelist = [math.log(closePrice) for closePrice in pricelistsymbol["Close"]]
+        highlist = [math.log(highPrice) for highPrice in pricelistsymbol["High"]]
+        lowlist = [math.log(lowPrice) for lowPrice in pricelistsymbol["Low"]]
+        maxprice = max(highlist)
+        minprice = min(lowlist)
+        rangePrice = maxPrice - minPrice
+        closelistscaled = [(closePrice - minPrice) / rangePrice for closePrice in closelist]
+        highlistscaled = [(highPrice - minPrice) / rangePrice for highPrice in highlist]
+        lowlistscaled = [(lowPrice - minPrice) / rangePrice for lowPrice in lowlist]
+        inputPriceList = []
+        for dayindex in dayscount:
+            inputPriceList.extend([highlistscaled[dayindex],closelistscaled[dayindex],lowlistscaled[dayindex]])
+        inputPriceListSymbols.append(inputPriceList)
+    for dayindex in dayscount:
+        for symbolindex in symbolCount:
+            inputPriceListSymbols.extend[inputPriceListSymbols[symbolindex][dayindex]]
+    return inputPriceListSymbols
+
+#parse To Rise Prob
+#Output: {"RiseProbabilities":[0.6, 0.55]}
+def parseToRiseProb(rsp):
+    problist = [probitem["probabilities"][1] for probitem in rsp["predictions"]]
+    outputRiseProb = {"RiseProbabilities": problist}
+    return outputRiseProb
