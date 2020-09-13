@@ -375,7 +375,7 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
             orderlist.append(neworder)
 
     if len(market_list) == 0:
-        return market_list, 0.0
+        return market_list, 0.0, 0, None
     market_list.sort(reverse = True, key = lambda item:item["Date"])
     
     for market_item in market_list:
