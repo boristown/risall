@@ -42,8 +42,10 @@ def generate_html(title, html_name, market_type,
         
 def generate_market_html(title, html_name, market_name, market_id,
                   market_type, market_type_ref,  market_prediction,
-                  price_list, donate, data_dict,
-                  localtime, body):
+                  #price_list, donate, data_dict,
+                  localtime
+                  #, body
+                  ):
     #env = Environment(loader=FileSystemLoader('./'))
     env = Environment(loader=FileSystemLoader('../static/template/'))
     template = env.get_template('market.html')
@@ -125,8 +127,10 @@ if __name__ == "__main__":
                 market_prediction = "今日操作：" + marketprices[0]["Prediction"] +  " 年化：" + str(round(annualised[market_id[0]] * 100, 2)) + "%"
                 generate_market_html(u"AI预测：" +market_id[1] +"--预测线forcastline.com", market_html_name, market_id[1], market_id[0], 
                       market_type[market_key], '../' + html_name[market_key], market_prediction,
-                      price_lists, getdonatetext(donate.donate), data_dict,
-                      time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), marketprices)
+                      #price_lists, getdonatetext(donate.donate), data_dict,
+                      time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                      #, marketprices
+                      )
             
             for indexline in indexlist:
                 if True or indexline[1][0:3] == 'USD' or ',USD' in indexline[1]:

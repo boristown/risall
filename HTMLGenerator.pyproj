@@ -54,7 +54,7 @@
     <Content Include="static\js\jquery-latest.js" />
     <Content Include="static\js\market.js" />
     <Content Include="static\Logo.ico" />
-    <Content Include="python\run.bat" />
+    <Content Include="python\run_html.bat" />
     <Content Include="static\s.html" />
     <Content Include="static\stocks.html" />
     <Content Include="static\stocksHK.html" />

@@ -4,6 +4,8 @@ import math
 import datetime
 import time
 
+atr_count = 20
+
 def init_mycursor():
     myconnector = mysql.connector.connect(
       host=mypsw.host,
@@ -252,7 +254,9 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
     atr = 0.0
     balance = 1.0
     trsum = 0
+    dayindex = 0
     for list_result in list_results:
+        dayindex += 1
         Open = list_result[1]
         High = list_result[2]
         Low = list_result[3]
@@ -263,12 +267,16 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
         last_c = Close
         if tr > 9.0 or tr == 0:
             continue
+        if dayindex > atr_count:
+            break
         lineno += 1
         trsum += tr
+        tr0 = tr / atr_count
+        tr0list.append(tr0)
     atr = trsum / lineno
-    
+
     last_c = 0
-    lineno = 0
+    #lineno = 0
 
     for list_result in list_results:
         Date = list_result[0]
@@ -285,25 +293,25 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                 Low = last_c
             elif last_c > High:
                 High = last_c
-        #tr = max(High, last_c) / min(Low, last_c) - 1.0
-        last_c = Close
-        #if tr > 9.0 or tr == 0:
-        #    continue
+        tr = max(High, last_c) / min(Low, last_c) - 1.0
+        #last_c = Close
+        if tr > 9.0 or tr == 0:
+            continue
         lineno += 1
-        #tr0 = tr / 120.0
+        tr0 = tr / atr_count
         #添加最新TR0值
-        #tr0list.append(tr0)
-        #atr += tr0
-        #if lineno > 120:
-        #    #删除120天前的TR0值
-        #    atr -= tr0list.pop(0)
+        tr0list.append(tr0)
+        atr += tr0
+        if lineno > atr_count:
+            #删除120天前的TR0值
+            atr -= tr0list.pop(0)
         if list_result[7] > 0 and atr > 0:
             #模拟交易
             for oldorder in orderlist:
                 if 'Buy' in oldorder["Prediction"]: #buy 
                     if Low < oldorder["StopPrice"]: #Stop
                         oldorder["StopDate"] = Date
-                        quantity = oldorder["Balance"] * 0.01 / oldorder["Close"] / oldorder["ATR"]
+                        quantity = oldorder["Balance"] * 0.006 / oldorder["Close"] / oldorder["ATR"]
                         buyamount = quantity * oldorder["Close"]
                         sellamount = quantity * oldorder["StopPrice"]
                         Profit = sellamount - buyamount
@@ -320,11 +328,11 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                         #continue
                     else:
                         oldorder["TrailingPrice"] = max(oldorder["TrailingPrice"], High)
-                        oldorder["StopPrice"] = oldorder["TrailingPrice"] / (atr + 1)
+                        oldorder["StopPrice"] = oldorder["TrailingPrice"] / (atr*2 + 1)
                 else: #sell
                     if High > oldorder["StopPrice"]: #Stop
                         oldorder["StopDate"] = Date
-                        quantity = oldorder["Balance"] * 0.01 / oldorder["Close"] / oldorder["ATR"]
+                        quantity = oldorder["Balance"] * 0.006 / oldorder["Close"] / oldorder["ATR"]
                         sellamount = quantity * oldorder["Close"]
                         buyamount = quantity * oldorder["StopPrice"]
                         Profit = sellamount - buyamount
@@ -341,7 +349,7 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                         #continue
                     else:
                         oldorder["TrailingPrice"] = min(oldorder["TrailingPrice"], Low)
-                        oldorder["StopPrice"] = oldorder["TrailingPrice"] * (atr + 1)
+                        oldorder["StopPrice"] = oldorder["TrailingPrice"] * (atr*2 + 1)
             neworder = {
                 "Date":list_result[0],
                 "Open":list_result[1],
@@ -398,7 +406,10 @@ def get_market_prices(market_id):
     lineno = 0
     atr = 0.0
     balance = 1.0
+    trsum = 0
+    dayindex = 0
     for list_result in list_results:
+        dayindex += 1
         Date = list_result[0]
         Open = list_result[1]
         High = list_result[2]
@@ -407,6 +418,7 @@ def get_market_prices(market_id):
         if last_c == 0:
             last_c = Open #Open Price
         tr = max(High, last_c) / min(Low, last_c) - 1.0
+        #last_c = Close
         if tr > 9.0 or tr == 0:
             continue
         lineno += 1
@@ -417,14 +429,13 @@ def get_market_prices(market_id):
         if lineno > 120:
             #删除120天前的TR0值
             atr -= tr0list.pop(0)
-        last_c = Close
         if list_result[7] > 0 and atr > 0:
             #模拟交易
             for oldorder in orderlist:
                 if 'Buy' in oldorder["Prediction"]:#buy 
                     if Low < oldorder["StopPrice"]:#Stop
                         oldorder["StopDate"] = Date
-                        quantity = oldorder["Balance"] * 0.01 / oldorder["Close"] / oldorder["ATR"]
+                        quantity = oldorder["Balance"] * 0.006 / oldorder["Close"] / oldorder["ATR"]
                         buyamount = quantity * oldorder["Close"]
                         sellamount = quantity * oldorder["StopPrice"]
                         Profit = sellamount - buyamount
@@ -437,11 +448,11 @@ def get_market_prices(market_id):
                         #continue
                     else:
                         oldorder["TrailingPrice"] = max(oldorder["TrailingPrice"], High)
-                        oldorder["StopPrice"] = oldorder["TrailingPrice"] / (atr + 1)
+                        oldorder["StopPrice"] = oldorder["TrailingPrice"] / (atr*2 + 1)
                 else:#sell
                     if High > oldorder["StopPrice"]:#Stop
                         oldorder["StopDate"] = Date
-                        quantity = oldorder["Balance"] * 0.01 / oldorder["Close"] / oldorder["ATR"]
+                        quantity = oldorder["Balance"] * 0.006 / oldorder["Close"] / oldorder["ATR"]
                         sellamount = quantity * oldorder["Close"]
                         buyamount = quantity * oldorder["StopPrice"]
                         Profit = sellamount - buyamount
@@ -454,7 +465,7 @@ def get_market_prices(market_id):
                         #continue
                     else:
                         oldorder["TrailingPrice"] = min(oldorder["TrailingPrice"], Low)
-                        oldorder["StopPrice"] = oldorder["TrailingPrice"] * (atr + 1)
+                        oldorder["StopPrice"] = oldorder["TrailingPrice"] * (atr*2 + 1)
             neworder = {
                 "Date":list_result[0],
                 "Open":list_result[1],
@@ -469,7 +480,7 @@ def get_market_prices(market_id):
                 #"ATR": list_result[8],
                 "ATR": atr,
                 "TrailingPrice": list_result[4],
-                "StopPrice": list_result[4] / (atr + 1) if 'Buy' in list_result[6]  else (atr + 1) * list_result[4],
+                "StopPrice": list_result[4] / (atr*2 + 1) if 'Buy' in list_result[6]  else (atr*2 + 1) * list_result[4],
                 "StopDate": '-',
                 "Profit": '0.0%',
                 "Balance": balance
@@ -515,6 +526,7 @@ def get_market_prices(market_id):
 def getInputPriceList(body_j_data):
     pricelistsymbols = body_j_data["Prices"]
     inputPriceListSymbols = []
+    inputPriceListSymbols2 = []
     symbolCount = len(pricelistsymbols)
     dayscount = len(pricelistsymbols[0]["Close"])
     for pricelistsymbol in pricelistsymbols:
@@ -523,22 +535,25 @@ def getInputPriceList(body_j_data):
         lowlist = [math.log(lowPrice) for lowPrice in pricelistsymbol["Low"]]
         maxprice = max(highlist)
         minprice = min(lowlist)
-        rangePrice = maxPrice - minPrice
-        closelistscaled = [(closePrice - minPrice) / rangePrice for closePrice in closelist]
-        highlistscaled = [(highPrice - minPrice) / rangePrice for highPrice in highlist]
-        lowlistscaled = [(lowPrice - minPrice) / rangePrice for lowPrice in lowlist]
+        rangePrice = maxprice - minprice
+        closelistscaled = [(closePrice - minprice) / rangePrice for closePrice in closelist]
+        highlistscaled = [(highPrice - minprice) / rangePrice for highPrice in highlist]
+        lowlistscaled = [(lowPrice - minprice) / rangePrice for lowPrice in lowlist]
         inputPriceList = []
-        for dayindex in dayscount:
+        for dayindex in range(dayscount):
             inputPriceList.extend([highlistscaled[dayindex],closelistscaled[dayindex],lowlistscaled[dayindex]])
         inputPriceListSymbols.append(inputPriceList)
-    for dayindex in dayscount:
-        for symbolindex in symbolCount:
-            inputPriceListSymbols.extend[inputPriceListSymbols[symbolindex][dayindex]]
-    return inputPriceListSymbols
+    for dayindex in range(dayscount*3):
+        for symbolindex in range(symbolCount):
+            inputPriceListSymbols2.append(inputPriceListSymbols[symbolindex][dayindex])
+    return inputPriceListSymbols2
 
 #parse To Rise Prob
 #Output: {"RiseProbabilities":[0.6, 0.55]}
 def parseToRiseProb(rsp):
+    print(rsp)
+    if 'error' in rsp:
+        return rsp
     problist = [probitem["probabilities"][1] for probitem in rsp["predictions"]]
     outputRiseProb = {"RiseProbabilities": problist}
     return outputRiseProb

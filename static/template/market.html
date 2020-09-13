@@ -51,7 +51,7 @@
                 <a href="{{market_type_ref}}">{{market_type}}</a>
             </h2>
             <h1 class="hidewhensimulation">{{market_name}}</h1>
-            <h2 class="hidewhensimulation">{{market_prediction}}</h2>
+            <h2 class="hidewhensimulation">{[market_prediction]}</h2>
             <!--实现多种交易系统的切换-->
             <table class="hidewhensimulation" id="SystemSwitcherTable">
                 <tr>
@@ -59,7 +59,7 @@
                         v-on:mouseenter="AISystemSwitcherMouseenter"
                         v-on:mouseout="AISystemSwitcherMouseout"
                         v-on:click="AISystemSwitcherClick">
-                        海龟三号AI交易系统
+                        海龟五号AI交易系统
                         Turtle No.3 AI Trading System
                     </th>
                     <th :class="TurtleSystemSwitcherClass"
@@ -93,7 +93,7 @@
                 </div>
 
                 <div align="center">
-                    <h4 style="text-align:center">市场评分由<a href="https://mp.weixin.qq.com/s/DWcvnNTaQ5IWIYN_CeQ8rA">海龟三号AI</a>评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
+                    <h4 style="text-align:center">市场评分由<a href="https://mp.weixin.qq.com/s/DWcvnNTaQ5IWIYN_CeQ8rA">海龟五号AI</a>评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
                     <h4 style="text-align:center"><a href="https://mp.weixin.qq.com/s/giZkEI_T7jY4nA8ABqf8XA">AI预测接口文档AI Prediction API Document</a></h4>
                     <table border="0" width="100%" id="MarketTable">
                         <tr class="head">

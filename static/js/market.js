@@ -105,19 +105,19 @@ axios
         clearItemAnimation: function (item, itemindex) {
             clearItemFrame(item, itemindex, this.tableitems);
         },
-        //海龟三号AI交易系统--鼠标移入
+        //海龟五号AI交易系统--鼠标移入
         AISystemSwitcherMouseenter: function () {
             if (this.AISystemSwitcherClass.indexOf(" focused") == -1) {
                 this.AISystemSwitcherClass += " focused";
             }
         },
-        //海龟三号AI交易系统--鼠标移出
+        //海龟五号AI交易系统--鼠标移出
         AISystemSwitcherMouseout: function () {
             if (this.AISystemSwitcherClass.indexOf(" focused") != -1) {
                 this.AISystemSwitcherClass.replace(" focused", "");
             }
         },
-        //海龟三号AI交易系统--点击
+        //海龟五号AI交易系统--点击
         AISystemSwitcherClick: function () {
             this.AISystemSwitcherClass = 'selected';
             this.TurtleSystemSwitcherClass = 'unselected';
