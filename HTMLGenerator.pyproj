@@ -5,7 +5,7 @@
     <ProjectGuid>9d8faa91-d26d-419c-9b75-da55489b0e4f</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>python\server.py</StartupFile>
+    <StartupFile>python\HTMLGenerator.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>python\</WorkingDirectory>

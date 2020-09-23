@@ -263,6 +263,8 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
         Close = list_result[4]
         if last_c == 0:
             last_c = Open #Open Price
+        if max(Open, last_c) / min(Open, last_c) > 10:
+            continue
         tr = max(High, last_c) / min(Low, last_c) - 1.0
         last_c = Close
         if tr > 9.0 or tr == 0:
@@ -293,8 +295,10 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                 Low = last_c
             elif last_c > High:
                 High = last_c
+        if max(Open, last_c) / min(Open, last_c) > 10:
+            continue
         tr = max(High, last_c) / min(Low, last_c) - 1.0
-        #last_c = Close
+        last_c = Close
         if tr > 9.0 or tr == 0:
             continue
         lineno += 1
@@ -410,6 +414,33 @@ def get_market_prices(market_id):
     dayindex = 0
     for list_result in list_results:
         dayindex += 1
+        Open = list_result[1]
+        High = list_result[2]
+        Low = list_result[3]
+        Close = list_result[4]
+        if last_c == 0:
+            last_c = Open #Open Price
+        if max(Open, last_c) / min(Open, last_c) > 10:
+            continue
+        tr = max(High, last_c) / min(Low, last_c) - 1.0
+        last_c = Close
+        if tr > 9.0 or tr == 0:
+            continue
+        if lineno > atr_count:
+            break
+        lineno += 1
+        trsum += tr
+        tr0 = tr / atr_count
+        tr0list.append(tr0)
+    if lineno < atr_count:
+        return market_list, 0.0
+    atr = trsum / atr_count
+
+    last_c = 0
+    #lineno = 0
+
+    for list_result in list_results:
+        dayindex += 1
         Date = list_result[0]
         Open = list_result[1]
         High = list_result[2]
@@ -417,16 +448,18 @@ def get_market_prices(market_id):
         Close = list_result[4]
         if last_c == 0:
             last_c = Open #Open Price
+        if max(Open, last_c) / min(Open, last_c) > 10:
+            continue
         tr = max(High, last_c) / min(Low, last_c) - 1.0
-        #last_c = Close
+        last_c = Close
         if tr > 9.0 or tr == 0:
             continue
         lineno += 1
-        tr0 = tr / 120.0
+        tr0 = tr / atr_count
         #添加最新TR0值
         tr0list.append(tr0)
         atr += tr0
-        if lineno > 120:
+        if lineno > atr_count:
             #删除120天前的TR0值
             atr -= tr0list.pop(0)
         if list_result[7] > 0 and atr > 0:
@@ -443,7 +476,7 @@ def get_market_prices(market_id):
                         if balance < 0:
                             balance = 0
                         else:
-                            oldorder["Profit"] = str(round(Profit / oldorder["Balance"] * 100, 3)) + '%' if oldorder["Balance"] > 0 else '0%'
+                            oldorder["Profit"] = str(round(Profit / oldorder["Balance"] * 100, 2)) + '%' if oldorder["Balance"] > 0 else '0%'
                         orderlist.remove(oldorder)
                         #continue
                     else:
@@ -460,7 +493,7 @@ def get_market_prices(market_id):
                         if balance < 0:
                             balance = 0
                         else:
-                            oldorder["Profit"] = str(round(Profit / oldorder["Balance"] * 100, 3)) + '%' if oldorder["Balance"] > 0 else '0%'
+                            oldorder["Profit"] = str(round(Profit / oldorder["Balance"] * 100, 2)) + '%' if oldorder["Balance"] > 0 else '0%'
                         orderlist.remove(oldorder)
                         #continue
                     else:
@@ -499,7 +532,8 @@ def get_market_prices(market_id):
         market_item["ATR"] = str(round(market_item["ATR"] * 100.0, 2)) + '%'
         market_item["StopPrice"] = float(format(market_item["StopPrice"], '.5g'))
 
-    for market_item in market_list[0:2]:
+    #for market_item in market_list[0:2]:
+    for market_item in market_list:
         currentdays = datetime.datetime.strptime(market_item["Date"], '%Y-%m-%d')
         #当前天数
         days = (currentdays - firstdate ).days
