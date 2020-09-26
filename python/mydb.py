@@ -315,7 +315,7 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                 if 'Buy' in oldorder["Prediction"]: #buy 
                     if Low < oldorder["StopPrice"]: #Stop
                         oldorder["StopDate"] = Date
-                        quantity = oldorder["Balance"] * 0.006 / oldorder["Close"] / oldorder["ATR"]
+                        quantity = oldorder["Balance"] * 0.02 / oldorder["Close"] / oldorder["ATR"]
                         buyamount = quantity * oldorder["Close"]
                         sellamount = quantity * oldorder["StopPrice"]
                         Profit = sellamount - buyamount
@@ -332,11 +332,11 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                         #continue
                     else:
                         oldorder["TrailingPrice"] = max(oldorder["TrailingPrice"], High)
-                        oldorder["StopPrice"] = oldorder["TrailingPrice"] / (atr*2 + 1)
+                        oldorder["StopPrice"] = oldorder["TrailingPrice"] / (atr*0.5 + 1)
                 else: #sell
                     if High > oldorder["StopPrice"]: #Stop
                         oldorder["StopDate"] = Date
-                        quantity = oldorder["Balance"] * 0.006 / oldorder["Close"] / oldorder["ATR"]
+                        quantity = oldorder["Balance"] * 0.02 / oldorder["Close"] / oldorder["ATR"]
                         sellamount = quantity * oldorder["Close"]
                         buyamount = quantity * oldorder["StopPrice"]
                         Profit = sellamount - buyamount
@@ -353,7 +353,7 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                         #continue
                     else:
                         oldorder["TrailingPrice"] = min(oldorder["TrailingPrice"], Low)
-                        oldorder["StopPrice"] = oldorder["TrailingPrice"] * (atr*2 + 1)
+                        oldorder["StopPrice"] = oldorder["TrailingPrice"] * (atr*0.5 + 1)
             neworder = {
                 "Date":list_result[0],
                 "Open":list_result[1],
@@ -368,7 +368,7 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                 #"ATR": list_result[8],
                 "ATR": atr,
                 "TrailingPrice": list_result[4],
-                "StopPrice": list_result[4] / (atr + 1) if 'Buy' in list_result[6]  else (atr + 1) * list_result[4],
+                "StopPrice": list_result[4] / (atr*0.5 + 1) if 'Buy' in list_result[6]  else (atr*0.5 + 1) * list_result[4],
                 "StopDate": '-',
                 "Profit": '0.0%',
                 "Balance": balance,
@@ -468,7 +468,7 @@ def get_market_prices(market_id):
                 if 'Buy' in oldorder["Prediction"]:#buy 
                     if Low < oldorder["StopPrice"]:#Stop
                         oldorder["StopDate"] = Date
-                        quantity = oldorder["Balance"] * 0.006 / oldorder["Close"] / oldorder["ATR"]
+                        quantity = oldorder["Balance"] * 0.02 / oldorder["Close"] / oldorder["ATR"]
                         buyamount = quantity * oldorder["Close"]
                         sellamount = quantity * oldorder["StopPrice"]
                         Profit = sellamount - buyamount
@@ -481,11 +481,11 @@ def get_market_prices(market_id):
                         #continue
                     else:
                         oldorder["TrailingPrice"] = max(oldorder["TrailingPrice"], High)
-                        oldorder["StopPrice"] = oldorder["TrailingPrice"] / (atr*2 + 1)
+                        oldorder["StopPrice"] = oldorder["TrailingPrice"] / (atr*0.5 + 1)
                 else:#sell
                     if High > oldorder["StopPrice"]:#Stop
                         oldorder["StopDate"] = Date
-                        quantity = oldorder["Balance"] * 0.006 / oldorder["Close"] / oldorder["ATR"]
+                        quantity = oldorder["Balance"] * 0.02 / oldorder["Close"] / oldorder["ATR"]
                         sellamount = quantity * oldorder["Close"]
                         buyamount = quantity * oldorder["StopPrice"]
                         Profit = sellamount - buyamount
@@ -498,7 +498,7 @@ def get_market_prices(market_id):
                         #continue
                     else:
                         oldorder["TrailingPrice"] = min(oldorder["TrailingPrice"], Low)
-                        oldorder["StopPrice"] = oldorder["TrailingPrice"] * (atr*2 + 1)
+                        oldorder["StopPrice"] = oldorder["TrailingPrice"] * (atr*0.5 + 1)
             neworder = {
                 "Date":list_result[0],
                 "Open":list_result[1],
@@ -513,7 +513,7 @@ def get_market_prices(market_id):
                 #"ATR": list_result[8],
                 "ATR": atr,
                 "TrailingPrice": list_result[4],
-                "StopPrice": list_result[4] / (atr*2 + 1) if 'Buy' in list_result[6]  else (atr*2 + 1) * list_result[4],
+                "StopPrice": list_result[4] / (atr*0.5 + 1) if 'Buy' in list_result[6]  else (atr*0.5 + 1) * list_result[4],
                 "StopDate": '-',
                 "Profit": '0.0%',
                 "Balance": balance
