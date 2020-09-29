@@ -315,7 +315,7 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                 if 'Buy' in oldorder["Prediction"]: #buy 
                     if Low < oldorder["StopPrice"]: #Stop
                         oldorder["StopDate"] = Date
-                        quantity = oldorder["Balance"] * 0.02 / oldorder["Close"] / oldorder["ATR"]
+                        quantity = oldorder["Balance"] * 0.03 / oldorder["Close"] / oldorder["ATR"]
                         buyamount = quantity * oldorder["Close"]
                         sellamount = quantity * oldorder["StopPrice"]
                         Profit = sellamount - buyamount
@@ -336,7 +336,7 @@ def get_market_prices_limit(market_id, pageindex, pagesize):
                 else: #sell
                     if High > oldorder["StopPrice"]: #Stop
                         oldorder["StopDate"] = Date
-                        quantity = oldorder["Balance"] * 0.02 / oldorder["Close"] / oldorder["ATR"]
+                        quantity = oldorder["Balance"] * 0.03 / oldorder["Close"] / oldorder["ATR"]
                         sellamount = quantity * oldorder["Close"]
                         buyamount = quantity * oldorder["StopPrice"]
                         Profit = sellamount - buyamount
@@ -468,7 +468,7 @@ def get_market_prices(market_id):
                 if 'Buy' in oldorder["Prediction"]:#buy 
                     if Low < oldorder["StopPrice"]:#Stop
                         oldorder["StopDate"] = Date
-                        quantity = oldorder["Balance"] * 0.02 / oldorder["Close"] / oldorder["ATR"]
+                        quantity = oldorder["Balance"] * 0.03 / oldorder["Close"] / oldorder["ATR"]
                         buyamount = quantity * oldorder["Close"]
                         sellamount = quantity * oldorder["StopPrice"]
                         Profit = sellamount - buyamount
@@ -485,7 +485,7 @@ def get_market_prices(market_id):
                 else:#sell
                     if High > oldorder["StopPrice"]:#Stop
                         oldorder["StopDate"] = Date
-                        quantity = oldorder["Balance"] * 0.02 / oldorder["Close"] / oldorder["ATR"]
+                        quantity = oldorder["Balance"] * 0.03 / oldorder["Close"] / oldorder["ATR"]
                         sellamount = quantity * oldorder["Close"]
                         buyamount = quantity * oldorder["StopPrice"]
                         Profit = sellamount - buyamount
