@@ -755,3 +755,7 @@ table.marketlisttable td,
 #SystemSwitcherTable .focused {
     font-weight: bold;
 }
+
+#appDonate{
+    visibility: hidden
+}

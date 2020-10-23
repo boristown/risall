@@ -53,13 +53,13 @@
             <h1 class="hidewhensimulation">{{market_name}}</h1>
             <h2 class="hidewhensimulation">{[market_prediction]}</h2>
             <!--实现多种交易系统的切换-->
-            <table class="hidewhensimulation" id="SystemSwitcherTable">
+            <table class="hidewhensimulation" id="SystemSwitcherTable" style="VISIBILITY:hidden">
                 <tr>
                     <th :class="AISystemSwitcherClass"
                         v-on:mouseenter="AISystemSwitcherMouseenter"
                         v-on:mouseout="AISystemSwitcherMouseout"
                         v-on:click="AISystemSwitcherClick">
-                        海龟五号AI交易系统
+                        海龟六号AI交易系统
                         Turtle No.3 AI Trading System
                     </th>
                     <th :class="TurtleSystemSwitcherClass"
@@ -81,7 +81,7 @@
                         <button type="submit"></button>
                     </form>
                 </div>
-                <h4 class="hidewhensimulation"><a href="donate.html">点击赞助AI纪元-预测线网站，您的名字将显示为弹幕。</a></h4>
+                <!--<h4 class="hidewhensimulation"><a href="donate.html">点击赞助AI纪元-预测线网站，您的名字将显示为弹幕。</a></h4>-->
 
                 <div id="container">
                 </div>
@@ -93,7 +93,7 @@
                 </div>
 
                 <div align="center">
-                    <h4 style="text-align:center">市场评分由<a href="https://mp.weixin.qq.com/s/DWcvnNTaQ5IWIYN_CeQ8rA">海龟五号AI</a>评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
+                    <h4 style="text-align:center">市场评分由<a href="https://mp.weixin.qq.com/s/DWcvnNTaQ5IWIYN_CeQ8rA">海龟六号AI</a>评估Market score assessed by AI：<a href="https://docs.qq.com/sheet/DWEFqRWV5c0ZTUW5y">点击添加市场Click to add markets</a></h4>
                     <h4 style="text-align:center"><a href="https://mp.weixin.qq.com/s/giZkEI_T7jY4nA8ABqf8XA">AI预测接口文档AI Prediction API Document</a></h4>
                     <table border="0" width="100%" id="MarketTable">
                         <tr class="head">
@@ -143,6 +143,7 @@
                     </div>
                     <br>
                     <div id="footer">
+                        <a href="donate.html">点击赞助AI纪元-预测线网站</a>
                         更新时间Updated Time: {{localtime}}（每60分钟更新一次Updated every 60 minutes）<br>
                         联系AI纪元-预测线：forcastline@163.com<br>
                         <a href="http://www.beian.miit.gov.cn/">京ICP备20013339号</a>

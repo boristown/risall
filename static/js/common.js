@@ -854,7 +854,7 @@ function drawItemFrame(item, itemindex, tableitems) {
     //11	找到图表中未绘制图形的且距离实心圆A最近的高度150 * 宽度300的矩形区域，设置为实心圆A的同色背景。
     //12	找到图表中未绘制图形的且距离实心圆B最近的高度150 * 宽度300的矩形区域，设置为实心圆B的同色背景。
     //13	在图层11上显示“AI预测XX评分XX触发做多 / 做空，ATR = XX %”，在图层12上显示“从价格XX下跌1倍ATR触发止损，盈利 / 亏损=XX %“，只显示2位有效数字。
-    //14	在图表上方，图层3的位置上显示：”海龟五号交易系统：头寸大小 = 余额 * 1 % /ATR，当移动亏损达到余额的1%时触发强制止损“，文字为背景反色。
+    //14	在图表上方，图层3的位置上显示：”海龟六号交易系统：头寸大小 = 余额 * 1 % /ATR，当移动亏损达到余额的1%时触发强制止损“，文字为背景反色。
     //15	在图表左侧预留的区域显示价格，价格只显示发生变化的最高3位数。例如价格范围9702到10213显示为97到102; 价格范围0.00345到0.00356显示为45到56。
     //16	在图表下方显示一条横线和N条短竖线作为日期坐标轴，使用浅灰（黑色背景时）或深灰（白色背景时）。
     //17	在图表左方显示一条竖线和N条短横线作为价格坐标轴，使用浅灰（黑色背景时）或深灰（白色背景时）。
@@ -1031,7 +1031,7 @@ function drawItemFrame(item, itemindex, tableitems) {
     ctx.fillText("AI指令:" +item.Prediction + " ATR:" + item["ATR"].toString(), textRectLeft + textLeft, textRectTop + fontHeight, textRectW);
     ctx.fillText("盈亏Profit: " + item.Profit, textRectLeft + textLeft, textRectTop + fontHeight * 2.5, textRectW);
     ctx.fillText("入场Cost: " + priceFormart(item["Close"]) + " => 离场Stop: " + priceFormart(item["StopPrice"]) + " [x" + priceScale.toString() + "]", textRectLeft + textLeft, textRectTop + fontHeight * 4, textRectW);
-    ctx.fillText("海龟五号AI交易系统：", textRectLeft + textLeft, textRectTop + fontHeight * 5.5, textRectW);
+    ctx.fillText("海龟六号AI交易系统：", textRectLeft + textLeft, textRectTop + fontHeight * 5.5, textRectW);
     ctx.fillText("Turtle No.3 AI Trading System:", textRectLeft + textLeft, textRectTop + fontHeight * 7, textRectW);
     ctx.fillText("头寸大小 = 余额 * 1 % / ATR；", textRectLeft + textLeft, textRectTop + fontHeight * 8.5, textRectW);
     ctx.fillText("Position = balance * 1% / ATR;", textRectLeft + textLeft, textRectTop + fontHeight * 10, textRectW);
