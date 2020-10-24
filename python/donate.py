@@ -12,12 +12,12 @@ donate =  [
 ]
 
 donateList = [
-	{ name:"熊*添", amount: 1000, date: dt(2020, 5, 23) },
-	{ name:"刘*超", amount: 200, date: dt(2020, 5, 23) },
-	{ name:"秦汉", amount: 100, date: dt(2020, 5, 25) },
-	{ name:"张*勇", amount: 50, date: dt(2020, 5, 25) },
-	{ name:"赵磊", amount: 12.34, date: dt(2020, 5, 25) },
-	{ name:"冯*俊", amount: 10, date: dt(2020, 5, 23) },
-	{ name:"徐坚", amount: 8.88, date: dt(2020, 5, 29) },
-	{ name:"于*万", amount: 1, date: dt(2020, 5, 25) },
+	{ "name":"熊*添", "amount": 1000, "date": dt(2020, 5, 23) },
+	{ "name":"刘*超", "amount": 200, "date": dt(2020, 5, 23) },
+	{ "name":"秦汉", "amount": 100, "date": dt(2020, 5, 25) },
+	{ "name":"张*勇", "amount": 50, "date": dt(2020, 5, 25) },
+	{ "name":"赵磊", "amount": 12.34, "date": dt(2020, 5, 25) },
+	{ "name":"冯*俊", "amount": 10, "date": dt(2020, 5, 23) },
+	{ "name":"徐坚", "amount": 8.88, "date": dt(2020, 5, 29) },
+	{ "name":"于*万", "amount": 1, "date": dt(2020, 5, 25) },
 	]
